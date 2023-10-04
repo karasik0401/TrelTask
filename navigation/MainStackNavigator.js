@@ -3,7 +3,7 @@ import { StyleSheet, Text, Image, View,Button,Pressable, Alert, SafeAreaView, } 
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import TaskPage from '../components/TaskPage'
+import TaskPage from '../components/Screen/TaskPage'
 
 
 const Stack = createStackNavigator()
