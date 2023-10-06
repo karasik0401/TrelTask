@@ -1,78 +1,115 @@
 import {
   StyleSheet,
   Text,
-  View, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
+  View,  Modal, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
-import React from 'react';
+import { CheckBox } from '@rneui/themed';
+import React, {useState} from 'react';
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
 
-function TaskPage({ route }) {
+function TaskPage({ navigation }) {
     const [number, onChangeNumber] = React.useState('');
+
+    const [modalVisible, setModalVisible] = useState(false);
   
     return (
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-            <View style={styles.task}>
+
+              <View style={styles.header}>
+                <View style={styles.header_row}>
+                  <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#FEFEFE"/>} />
+                  <Text style={styles.title}>Название задачи</Text>
+                </View>
                 
-                <View style={styles.header}>
-                <IconButton style={styles.icon_footer} icon={props => <Icon  name="close-circle" {...props} color="#8CA5AD"/>} /> 
-                 <Text style={styles.text_btitle}>Создание UX/UI</Text>
-                 <IconButton style={styles.icon_footer} icon={props => <Icon  name="arrow-up-circle" {...props} color="#8CA5AD"/>} /> 
-               </View>
-               <Text style={styles.text_option}>Сделать прототип приложения и создать дизайн. Подобрать цвета, элементы. Подготовить макет к верстке.</Text>
-               <View style={styles.checkbox}>
-                    <View style={styles.checkbox_header}>
-                        <View style={styles.row}>
-                        <IconButton style={styles.icon_footer} icon={props => <Icon  name="checkbox-marked-circle-outline" {...props} color="#8CA5AD"/>} /> 
-                            <Text style={styles.text_title}>Чек-Лист</Text>
-                        </View>
-                           
-                        <IconButton style={styles.icon_footer} icon={props => <Icon  name="plus-circle-outline" {...props} color="#8CA5AD"/>} /> 
-                    </View>
-                    <View style={styles.checkbox_list}>
-                        <View style={styles.checkbox_row}>
-                            <Text style={styles.text_chbox}>Найти аналоги</Text>
-                            <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#8CA5AD"/>} /> 
-                            
-                        </View>
-                        <View style={styles.checkbox_row}>
-                            <Text style={styles.text_chbox}>Создать прототип</Text>
-                            <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#8CA5AD"/>} /> 
-                        </View>
-                        <View style={styles.checkbox_row}>
-                            <Text style={styles.text_chbox}>Накинуть дизайн</Text>
-                            <IconButton style={styles.icon_chb}  icon={props => <Icon  name="checkbox-blank-circle-outline" {...props} color="#8CA5AD"/>} />  
-                        </View>
-                    </View>
+                <IconButton style={styles.icon_header}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#FEFEFE"/>} />
+              </View>
 
+              <Text style={styles.discription}>Сделать прототип приложения и создать дизайн. Подобрать цвета, элементы. Подготовить макет к верстке.</Text>
+
+              <View style={styles.checkbox}> 
+                <View style={styles.checkbox_bigrow}>
+                  <View style={styles.checkbox_row}>
+                    <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                    <Text style={styles.check_title}>Чек-лист</Text>
+                  </View>
+                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#1C1C1C"/>} />
+                </View>
+
+                <View style={styles.row_check}>
+                  <Text style={styles.check_title}>Найти аналоги</Text>
+                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                </View>
+
+                <View style={styles.row_check}>
+                  <Text style={styles.check_title}>Создать прототип</Text>
+                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                </View>
+
+                <View style={styles.row_check}>
+                  <Text style={styles.check_title}>Накинуть дизайн</Text>
+                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                </View>
+              </View>
+
+              <View style={styles.footerTask}>
+                <View style={styles.footerTask_row}>
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <Text style={styles.fottxt}>01.05.24</Text>
+                </View>
+
+                <View style={styles.footerTask_row}>
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                  onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                  }}>
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <Text style={styles.modalText}>Выберите цвет метки</Text>
+                      <Pressable
+                        style={[styles.button, styles.buttonCloseGreen]}
+                        onPress={() => setModalVisible(!modalVisible)}>
+                        <View style={styles.textStyle}></View>
+                      </Pressable>
+                      <Pressable
+                        style={[styles.button, styles.buttonCloseRed]}
+                        onPress={() => setModalVisible(!modalVisible)}>
+                        <View style={styles.textStyle}></View>
+                      </Pressable>
+                      <Pressable
+                        style={[styles.button, styles.buttonCloseOrange]}
+                        onPress={() => setModalVisible(!modalVisible)}>
+                        <View style={styles.textStyle}></View>
+                      </Pressable>
+                    </View>
+                  </View>
+                </Modal>
+                <Pressable
+                  style={[styles.button, styles.buttonOpen]}
+                  onPress={() => setModalVisible(true)}>
+                  <View style={styles.textStyle}></View>
+                </Pressable>
+                </View>
+
+                <View style={styles.footerTask_row}>
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
                 
-
-
-               </View>
-               <View style={styles.optionat_row}>
-                    <View style={styles.icon}></View>
-                    <Text style={styles.text_chbox}>01.05.24</Text>
-
-                </View>
-                <View style={styles.optionat_row}>
-                    <View style={styles.icon}></View>
-                    <View style={styles.mark}></View>
-
-                </View>
-                <View style={styles.optionat_row}>
-                    <View style={styles.icon}></View>
-                    <View style={styles.member}></View>
-
                 </View>
 
-                <View style={styles.optionat_row}>
-                    <View style={styles.icon}></View>
-                    <Text style={styles.file_titile}>Функциональные требования</Text>
-
+                <View style={styles.footerTask_row}>
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <Text style={styles.fottxt}>01.05.24</Text>
                 </View>
-            </View>
+              </View>
+
+              
+
             </ScrollView>
             
 
@@ -103,9 +140,150 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         height: 844,
-        backgroundColor: '#8CA5AD'
+        backgroundColor: '#1C1C1C'
     
       },
+
+      fottxt:{
+        fontSize: 16,
+        color: "#FEFEFE",
+        marginTop: 4,
+      },
+
+      modalView: {
+        margin: 420,
+        width: 180,
+        height: 180,
+        backgroundColor: '#FEFEFE',
+        borderRadius: 30,
+        padding: 16,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+
+      footerTask:{
+        display: 'flex',
+        flexDirection: 'column',
+        marginTop: 32,
+
+      },
+
+      footerTask_row:{
+        display: 'flex',
+        flexDirection: 'row', 
+        marginBottom: 18,
+      },
+      button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+        width: 80,
+        height: 30,
+      },
+      buttonOpen: {
+        backgroundColor: '#7BB558',
+      },
+      buttonCloseGreen: {
+        backgroundColor: '#7BB558',
+        marginBottom: 8,
+      },
+      buttonCloseRed: {
+        backgroundColor: '#E55050',
+        marginBottom: 8,
+      },
+      buttonCloseOrange: {
+        backgroundColor: '#ED863B',
+        marginBottom: 8,
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+      },
+
+      row_check:{
+        marginTop: 16,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      },
+      header:{
+        display: 'flex',
+        flexDirection: 'row',
+        marginTop: 53,
+        width: 342,
+        justifyContent: 'space-between'
+      },
+
+      header_row:{
+        display: 'flex',
+        flexDirection: 'row',
+      },
+
+      title:{
+        fontSize: 24,
+        fontWeight: 600,
+        color: '#FEFEFE',
+        marginLeft: 12,
+      },
+
+      discription:{
+        width: 342,
+        marginTop: 32,
+        color: '#FEFEFE',
+        fontSize: 16,
+        fontWeight: 400,
+        lineHeight: 24,
+
+      },
+
+      check_title:{
+        fontSize: 16,
+        fontWeight: 500,
+      },
+
+      checkbox:{
+        marginTop: 32,
+        backgroundColor: '#CDDCA1',
+        paddingTop: 24,
+        paddingBottom: 24,
+        paddingLeft: 16,
+        paddingRight: 16,
+        borderRadius: 30,
+      },
+
+      checkbox_bigrow:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+
+      },
+
+      checkbox_row:{
+        display: 'flex',
+        flexDirection: 'row',
+
+      },
+
+      check_title:{
+        fontSize: 18,
+        fontWeight: 600,
+        color: "#1C1C1C",
+        
+        marginLeft: 8, 
+      },
+
       put_txt:{
         fontSize: 16,
         borderColor: '#C2C2C2',
@@ -115,6 +293,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         width: 294,
         alignContent: 'center',
+        paddingLeft: 8,
       },
 
       footer:{
@@ -126,7 +305,7 @@ const styles = StyleSheet.create({
             justifyContent: 'space-around',
             width: 390,
             marginTop: -80,
-            backgroundColor: '#FAFEFF',
+            backgroundColor: '#1C1C1C',
             paddingTop: 8,
             height: 80,
     
@@ -139,40 +318,32 @@ const styles = StyleSheet.create({
 
       },
 
-      task:{
-        width: 354,
-        height: 'maxContetnt',
-        display: 'flex',
-        flexDirection: 'column',
-        marginTop: 62,
-        backgroundColor: '#FAFEFF',
-        borderRadius: 30,
-
-      },
-
-      header:{
-        width: 322,
-        display: 'flex',
-        flexDirection: 'row',
-        alignSelf:'center',
-        justifyContent: 'space-between',
-        marginTop: 24,
-        marginBottom: 24, 
-
-
-      },
+      
+      
 
       icon:{
         width: 24,
         height: 24,
         borderRadius: 50,
-        backgroundColor: '#8CA5AD',
-        marginRight: 16
+        backgroundColor: '#FEFEFE',
+
       },
+      icon_header:{
+        width: 30,
+        height: 30, 
+
+      },
+
       icon_chb:{
+        width: 22,
+        height: 22,
+
+      },
+
+      icon_taskfooter:{
         width: 30,
         height: 30,
-        marginLeft: -50
+        marginRight: 12,
 
       },
       icon_title:{
@@ -182,132 +353,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#8CA5AD',
         
       },
-
-      checkbox:{
-        width: 326,
-        display: 'flex',
-        flexDirection: 'column',
-        marginLeft: 14,
-        backgroundColor: '#F0F0F0',
-        borderRadius: 14,
-        marginTop: 24,
-        marginBottom: 24,
-
-      },
-
-      checkbox_header:{
-        display: 'flex',
-        flexDirection: 'row',
-        marginTop: 12,
-        width: 300,
-        marginLeft: 13,
-        justifyContent: 'space-between',
-        
-        
-        
-      },
-
-      checkbox_list:{
-        display: 'flex',
-        flexDirection: 'column',
-        marginTop: 16,
-
-
-      },
-
-      checkbox_row:{
-        display: 'flex',
-        flexDirection: 'row',
-        marginBottom: 16,
-        marginLeft: 12,
-        width: 302,
-        justifyContent: 'space-between',
-
-      },
-
-      text_option:{
-        fontSize: 16,
-        width: 322,
-        alignSelf: 'center',
-        color: '#333',
-        fontWeight: '400',
-
-      },
-
-      text_title:{
-        fontSize: 18,
-        alignSelf: 'center',
-        color: '#333',
-        fontWeight: '500',
-
-      },
-
-      row:{
-        display: 'flex',
-        flexDirection: 'row',
-        width: 114,
-        justifyContent: 'space-between'
-      },
-
-      text_chbox:{
-        fontSize: 16,
-        width: 322,
-        alignSelf: 'center',
-        color: '#333',
-        fontWeight: '400',
-
-      },
-
-      text_btitle:{
-        fontSize: 18,
-        color: '#333',
-        fontWeight: '500',
-
-      },
-
-      optionat_row:{
-        display: 'flex',
-        flexDirection: 'row',
-        marginBottom: 16,
-        marginLeft: 33.5,
-        marginBottom: 16,
-        width: 287,
-
-
-      },
-
-      mark:{
-        width: 71,
-        height: 22,
-        borderRadius: 12,
-        backgroundColor: '#7BB558'
-      },
-
-      file_titile:{
-        fontSize: 16,
-        width: 245,
-        alignSelf: 'center',
-        color: '#333',
-        fontWeight: '400',
-      },
-
-      member:{
-        width: 24,
-        height: 24,
-        borderRadius: 50,
-        backgroundColor: '#8CA5AD'
-      },
-
-
-
-
-
-
-
-
-
-
-
 
 })
 
