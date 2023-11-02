@@ -6,6 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 import TaskPage from '../components/Screen/TaskPage'
 import HomePage from '../components/Screen/HomePage';
 import NavBar from '../components/Widget/NavBar';
+import CardBoard_home from '../components/Widget/CardBoard_home';
+import CardTask_home from '../components/Widget/CardTask_home';
 
 
 const Stack = createStackNavigator()
@@ -42,6 +44,25 @@ function MainStackNavigator() {
           headerShown: false,
           headerLeft: () => null,}}
         />
+
+    <Stack.Screen
+          name='CardBoard_home'
+          component={CardBoard_home}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+
+        <Stack.Screen
+          name='CardTask_home'
+          component={CardTask_home}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+    
       
     </Stack.Navigator>
   </NavigationContainer>

@@ -8,6 +8,8 @@ import React, {useState} from 'react';
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
+import CheckList from '../Widget/CheckList';
+
 
 function TaskPage({ navigation }) {
     const [number, onChangeNumber] = React.useState('');
@@ -20,48 +22,25 @@ function TaskPage({ navigation }) {
 
               <View style={styles.header}>
                 <View style={styles.header_row}>
-                  <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#FEFEFE"/>} />
+                  <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="arrow-left-circle" {...props} color="#FEFEFE"/>} />
                   <Text style={styles.title}>Название задачи</Text>
                 </View>
                 
-                <IconButton style={styles.icon_header}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#FEFEFE"/>} />
+                <IconButton style={styles.icon_header}  icon={props => <Icon   name="dots-vertical" {...props} color="#FEFEFE"/>} />
               </View>
 
               <Text style={styles.discription}>Сделать прототип приложения и создать дизайн. Подобрать цвета, элементы. Подготовить макет к верстке.</Text>
 
-              <View style={styles.checkbox}> 
-                <View style={styles.checkbox_bigrow}>
-                  <View style={styles.checkbox_row}>
-                    <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
-                    <Text style={styles.check_title}>Чек-лист</Text>
-                  </View>
-                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#1C1C1C"/>} />
-                </View>
-
-                <View style={styles.row_check}>
-                  <Text style={styles.check_title}>Найти аналоги</Text>
-                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
-                </View>
-
-                <View style={styles.row_check}>
-                  <Text style={styles.check_title}>Создать прототип</Text>
-                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
-                </View>
-
-                <View style={styles.row_check}>
-                  <Text style={styles.check_title}>Накинуть дизайн</Text>
-                  <IconButton style={styles.icon_chb}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
-                </View>
-              </View>
+              <CheckList/>
 
               <View style={styles.footerTask}>
                 <View style={styles.footerTask_row}>
-                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="calendar-month" {...props} color="#FEFEFE"/>} />
                 <Text style={styles.fottxt}>01.05.24</Text>
                 </View>
 
                 <View style={styles.footerTask_row}>
-                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="bookmark-outline" {...props} color="#FEFEFE"/>} />
                 <Modal
                   animationType="slide"
                   transparent={true}
@@ -98,12 +77,12 @@ function TaskPage({ navigation }) {
                 </View>
 
                 <View style={styles.footerTask_row}>
-                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="account-plus-outline" {...props} color="#FEFEFE"/>} />
                 
                 </View>
 
                 <View style={styles.footerTask_row}>
-                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <IconButton style={styles.icon_taskfooter}  icon={props => <Icon   name="file-document-outline" {...props} color="#FEFEFE"/>} />
                 <Text style={styles.fottxt}>01.05.24</Text>
                 </View>
               </View>
@@ -116,14 +95,14 @@ function TaskPage({ navigation }) {
             <KeyboardAvoidingView behavior="padding" style={styles.screen}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.footer}> 
-                    <IconButton style={styles.icon_footer}  icon={props => <Icon  name="paperclip" {...props} color="#8CA5AD"/>} />
+                    <IconButton style={styles.icon_footer}  icon={props => <Icon  name="paperclip" {...props} color="#FEFEFE"/>} />
                     <View>
                         <TextInput
                         style={styles.put_txt}
                         placeholder="Ваше мнение?"
                         />
                         </View> 
-                        <IconButton style={styles.icon_footer} icon={props => <Icon  name="arrow-up-circle" {...props} color="#8CA5AD"/>} /> 
+                        <IconButton style={styles.icon_footer} icon={props => <Icon  name="arrow-up-circle" {...props} color="#FEFEFEb"/>} /> 
 
                     </View>
                 </TouchableWithoutFeedback>
@@ -151,7 +130,8 @@ const styles = StyleSheet.create({
       },
 
       modalView: {
-        margin: 420,
+        marginTop: 420,
+        alignSelf: 'center',
         width: 180,
         height: 180,
         backgroundColor: '#FEFEFE',
