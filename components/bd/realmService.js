@@ -1,57 +1,82 @@
-import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, Button } from 'react-native';
-var Realm = require('realm');
+// realmService.js
 
-let realm;
+import * as Realm from 'realm';
 
-export default class realmService extends Component {
+class MyTask extends Realm.Object {}
+class Checklist extends Realm.Object {}
 
-  constructor() {
-
-    super();   
-
-    realm = new Realm({
-      schema: [{
-        name: 'Employee',
-        primaryKey: 'emp_id',
-        properties:
-        {
-          emp_id: { type: 'int', default: 0 },
-          emp_first_name: 'string',
-          emp_last_name: 'string'
-        }
-      }],
-      schemaVersion: 0
-    });
-  }
-
-  render() {
-
-    // Writing data to real database
-    realm.write(() => {
-      var ID = realm.objects('Employee').length + 1;
-      realm.create('Employee', { emp_id: ID, emp_first_name: 'rajesh', emp_last_name: 'kumar' });
-    });
-
-    // getting realm database data using employee object
-    var employeeClass = realm.objects('Employee');
-    var getJSONData = JSON.stringify(employeeClass);
-    realm.close();
-
-
-    return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 15, textAlign: 'center' }}>
-          {getJSONData}</Text>
-      </View>
-    );
-  }
-}
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
+MyTask.schema = {
+  name: 'MyTask',
+  properties: {
+    id: 'int',
+    title: 'string',
+    description: 'string',
+    deadline: 'int',
+    participant: 'string',
+    done: 'bool',
+    checklist: 'bool',
   },
-});
+};
+
+Checklist.schema = {
+  name: 'Checklist',
+  properties: {
+    id: 'int',
+    title: 'string',
+    done: 'bool',
+  },
+};
+
+const databaseOptions = {
+  path: 'trelltask.realm',
+  schema: [MyTask, Checklist],
+};
+
+const realm = new Realm(databaseOptions);
+
+const addTask = (task) => {
+  realm.write(() => {
+    realm.create('MyTask', task);
+  });
+};
+
+const addChecklistItem = (item) => {
+  realm.write(() => {
+    realm.create('Checklist', item);
+  });
+};
+
+const getAllTasks = () => {
+  return realm.objects('MyTask');
+};
+
+const getAllChecklistItems = () => {
+  return realm.objects('Checklist');
+};
+
+const deleteTask = (taskId) => {
+  const taskToDelete = realm.objectForPrimaryKey('MyTask', taskId);
+  if (taskToDelete) {
+    realm.write(() => {
+      realm.delete(taskToDelete);
+    });
+  }
+};
+
+const deleteChecklistItem = (itemId) => {
+  const itemToDelete = realm.objectForPrimaryKey('Checklist', itemId);
+  if (itemToDelete) {
+    realm.write(() => {
+      realm.delete(itemToDelete);
+    });
+  }
+};
+
+export {
+  addTask,
+  addChecklistItem,
+  getAllTasks,
+  getAllChecklistItems,
+  deleteTask,
+  deleteChecklistItem,
+};
