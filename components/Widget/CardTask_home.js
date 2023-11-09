@@ -6,6 +6,8 @@ import {
   import React from 'react';
   import { Stack, IconButton } from "@react-native-material/core";
   import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+
+  
   
   
   function CardTask_home({ route }) {
