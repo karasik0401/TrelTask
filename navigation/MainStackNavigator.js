@@ -5,10 +5,13 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import TaskPage from '../components/Screen/TaskPage'
 import HomePage from '../components/Screen/HomePage';
-import bdPage from '../components/Screen/bdPage'
 import NavBar from '../components/Widget/NavBar';
 import CardBoard_home from '../components/Widget/CardBoard_home';
 import CardTask_home from '../components/Widget/CardTask_home';
+import Sign_up from '../components/Screen/Sign_up';
+import Sign_in from '../components/Screen/Sign_in';
+import Profile from '../components/Screen/Profile';
+
 
 
 const Stack = createStackNavigator()
@@ -21,8 +24,16 @@ function MainStackNavigator() {
     <Stack.Navigator>
 
     <Stack.Screen
-          name='bdPage'
-          component={bdPage}
+          name='Sign_in'
+          component={Sign_in}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+    <Stack.Screen
+          name='Sign_up'
+          component={Sign_up}
           options={{title: ' ',
           headerShown: false,
           headerLeft: () => null,}}
@@ -39,6 +50,14 @@ function MainStackNavigator() {
     <Stack.Screen
           name='HomePage'
           component={HomePage}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+    <Stack.Screen
+          name='Profile'
+          component={Profile}
           options={{title: ' ',
           headerShown: false,
           headerLeft: () => null,}}

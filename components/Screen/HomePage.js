@@ -1,7 +1,7 @@
 import {
     StyleSheet,
     Text,
-    View, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
+    View, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity
   } from 'react-native';
 import React from 'react';
 import { Stack, IconButton } from "@react-native-material/core";
@@ -22,45 +22,54 @@ import CardTask_home from '../Widget/CardTask_home';
 
               <View style={styles.header}>
                 <View style={styles.header_row}>
-                  <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="home" {...props} color="#FEFEFE"/>} />
+                  <IconButton style={styles.icon_header} onPress={() => navigation.navigate('TaskPage')}  icon={props => <Icon   name="home" {...props} color="#FEFEFE"/>} />
                   <Text style={styles.title}>Главная</Text>
                 </View>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                  <IconButton style={styles.icon_header}  icon={props => <Icon   name="account" {...props} color="#FEFEFE"/>} />
+                </TouchableOpacity>
                 
-                <IconButton style={styles.icon_header}  icon={props => <Icon   name="account" {...props} color="#FEFEFE"/>} />
               </View>
 
               <Text style={styles.h2}>Твои доски</Text>
             
             <ScrollView  showsHorizontalScrollIndicator={false} horizontal={true} style={styles.body}>
-              <View>
-                <CardBoard_home style={styles.card}/>
-              </View>
-
-              <View>
+              
+              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
                 <CardBoard_home/>
-              </View>
+              </TouchableOpacity>
 
-              <View>
+              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
                 <CardBoard_home/>
-              </View>
+              </TouchableOpacity>
 
-              <View>
+              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
                 <CardBoard_home/>
-              </View>
+              </TouchableOpacity>
+
+              
             
             </ScrollView>
 
             <Text style={styles.h2}>Твои задачи</Text>
 
             <View style={styles.tasks}>
+              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
+                <CardTask_home />
+              </TouchableOpacity>
+              
+              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
+                <CardTask_home />
+              </TouchableOpacity>
+              
+              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
+              <CardTask_home />
+              </TouchableOpacity>
 
-              <CardTask_home/>
-
-              <CardTask_home/>
-
-              <CardTask_home/>
-
-              <CardTask_home/>
+              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
+                <CardTask_home />
+              </TouchableOpacity>
+              
             </View>
 
             </ScrollView>

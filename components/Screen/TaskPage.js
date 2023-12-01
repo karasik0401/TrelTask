@@ -17,7 +17,7 @@ function TaskPage({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
   
     return (
-        <View style={styles.container}>
+        <View style={styles.container} >
             <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
 
               <View style={styles.header}>
