@@ -35,7 +35,7 @@ import CardTask_home from '../Widget/CardTask_home';
             
             <ScrollView  showsHorizontalScrollIndicator={false} horizontal={true} style={styles.body}>
               
-              <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
+              <TouchableOpacity onPress={() => navigation.navigate('BoardPage')}>
                 <CardBoard_home/>
               </TouchableOpacity>
 

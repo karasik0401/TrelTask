@@ -11,6 +11,10 @@ import CardTask_home from '../components/Widget/CardTask_home';
 import Sign_up from '../components/Screen/Sign_up';
 import Sign_in from '../components/Screen/Sign_in';
 import Profile from '../components/Screen/Profile';
+import Camera from '../components/Screen/Camera';
+import BoardPage from '../components/Screen/BoardPage';
+import BoardList from '../components/Widget/BoardList';
+import CardTask_board from '../components/Widget/CardTask_board';
 
 
 
@@ -26,6 +30,36 @@ function MainStackNavigator() {
     <Stack.Screen
           name='Sign_in'
           component={Sign_in}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+    <Stack.Screen
+          name='Camera'
+          component={Camera}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+        <Stack.Screen
+          name='CardTask_board'
+          component={CardTask_board}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+    <Stack.Screen
+          name='BoardPage'
+          component={BoardPage}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+    <Stack.Screen
+          name='BoardList'
+          component={BoardList}
           options={{title: ' ',
           headerShown: false,
           headerLeft: () => null,}}

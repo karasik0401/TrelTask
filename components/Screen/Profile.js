@@ -27,24 +27,29 @@ function Profile({ navigation }) {
         <Image style={styles.photo}/>
 
         <View style={styles.rec_one}>
+          <View style={styles.img}>
+
+          </View>
           <Text style={styles.login}>Анастасия</Text>
 
-          <Text style={styles.email}>karasik0401@mail.ru</Text>
+          <Text style={styles.email}>#04</Text>
+
+          <View style={styles.rec_t}>
+            <Pressable style={styles.btn} onPress={() => navigation.navigate('Camera')}>
+            <Text style={styles.btn_text}>Редактировать</Text>
+            </Pressable>
+
+            <Pressable style={styles.btn} onPress={() => navigation.navigate('Sign_in')}>
+            <Text style={styles.btn_text}>Друзья</Text>
+            </Pressable>
         </View>
-        
-        <View style={styles.rec_t}>
-
-          <View style={styles.group_big}>
-
 
             <Pressable style={styles.btn_exit} onPress={() => navigation.navigate('Sign_in')}>
-            <Text style={styles.btn_text}>Выйти</Text>
+            <Text style={styles.btn_text_exit}>Выйти</Text>
             </Pressable>
-          </View>
-
-          
-
         </View>
+        
+        
         
         </ScrollView>
 
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#1C1C1C',
+    backgroundColor: '#CDDCA1',
     alignItems: 'center',
     justifyContent: 'center',
     height: 844,
@@ -71,61 +76,49 @@ const styles = StyleSheet.create({
     zIndex: 1,
     
   },
-  text:{
-    fontSize: 18,
-    color: '#A3A6AA',
-    marginTop: 20,
-    marginLeft: 16,
-
-  },
-  group_big:{
-    marginTop: 0,
-  },
-
   rec_one:{
-    marginTop: -50,
-    backgroundColor: "#1C1C1C",
-    width: 390,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    height:142,
-  },
-  rec_t:{
-    marginTop: -50,
-    width: 390,
-    backgroundColor: "#252525",
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    height: 324,
-    display: 'flex',
-    flexDirection: "column",
-    justifyContent: 'center'
-  },
-
-  group:{
-    display: 'flex',
-    flexDirection: "row",
-    width: 283,
-    marginLeft: 52,
-    marginBottom: 21,
-
-    
-  },
-
-  photo:{
-    backgroundColor:"#828282",
+    height: 648,
     width:390,
-    height: 481,
-    zIndex: 0,
-    
+    marginTop: 196,
+    backgroundColor:"#1C1C1C",
+    borderTopRightRadius: 40,
+    borderTopLeftRadius: 40,
+  },
+  btn_exit:{
+    marginTop: 283,
+    alignSelf: "center",
+
+  },
+
+  btn_text_exit:{
+    fontSize: 18,
+    color:"#EB5093"
+  },
+
+  rec_t:{
+    alignSelf: 'center',
+    display: 'flex',
+    alignContent: 'flex-start',
+    height: 75,
+    width: 287,
+    marginTop: 47,
+
+  },
+  img:{
+    height: 200,
+    width: 200,
+    borderRadius: 100,
+    backgroundColor: "#fff",
+    marginTop: -117,
+    alignSelf: "center"
   },
 
   login:{
-    marginTop: 16,
+    marginTop: 28,
     fontFamily: 'Inter',
     fontStyle: 'normal',
     fontWeight: 400,
-    fontSize: 26,
+    fontSize: 20,
     lineHeight: 31,
     marginBottom:8,
     color:"#FEFEFE",
@@ -135,20 +128,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontStyle: 'normal',
     fontWeight: 400,
-    fontSize: 17,
+    fontSize: 16,
     lineHeight: 21,
     color: '#A3A6AA',
-    marginBottom:30,
     alignSelf: "center"
   },
 
-  btn:{
-    width:50,
-    height:50,
-    borderRadius: 17,
-    borderWidth:2,
-    borderColor: "#CDDCA1",
-  },
+ 
 
   icon:{
     alignSelf: 'center',
@@ -156,17 +142,12 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     transform: [{ rotate: '-90deg'}]
 },
-  btn_exit: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    width: 94,
-    height: 30,
-    borderRadius: 10, 
+  btn: {
+    marginBottom: 27,
   },
   btn_text:{
     fontSize: 20,
-    color: '#CDDCA1',
+    color: '#F2F3F3',
     paddingBottom: 5,
   },
   

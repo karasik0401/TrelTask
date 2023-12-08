@@ -67,7 +67,7 @@ function Sign_up({navigation}) {
               id = {4}
             />
             <View style={styles.btnContainer}>
-              <Pressable style={styles.btn} onPress={() => navigation.navigate('Profile')}>
+              <Pressable style={styles.btn} onPress={() => navigation.navigate('HomePage')}>
                 <Text style={styles.btn_text}>Зарегистрироваться</Text>
               </Pressable>
 
