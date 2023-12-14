@@ -1,7 +1,7 @@
 import {
     StyleSheet,
     Text,
-    View, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
+    View, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity
   } from 'react-native';
   import React from 'react';
   import { Stack, IconButton } from "@react-native-material/core";
@@ -13,7 +13,7 @@ import {
   function CardTask_board({ route }) {
     
       return (
-          <View style={styles.container}>
+          <View style={styles.container} >
             
             <View style={styles.header}>
                 <Text style={styles.title}>Прописать пользовательские требования</Text>
@@ -25,7 +25,7 @@ import {
             <View style={styles.img}></View>
             <View style={styles.column}>
             <View style={styles.date}>
-                <Text style={styles.date}t>08.11.23</Text>
+                <Text style={styles.date}>08.11.23</Text>
             </View>
 
             <View style={styles.line}>

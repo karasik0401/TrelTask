@@ -41,12 +41,12 @@ function MainStackNavigator() {
           headerShown: false,
           headerLeft: () => null,}}
         />
-        <Stack.Screen
-          name='CardTask_board'
-          component={CardTask_board}
-          options={{title: ' ',
-          headerShown: false,
-          headerLeft: () => null,}}
+    <Stack.Screen
+        name='CardTask_board'
+        component={CardTask_board}
+        options={{title: ' ',
+        headerShown: false,
+        headerLeft: () => null,}}
         />
 
     <Stack.Screen

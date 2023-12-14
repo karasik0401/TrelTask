@@ -19,17 +19,15 @@ import CardTask_home from '../Widget/CardTask_home';
           <View style={styles.container}>
 
           <ScrollView showsVerticalScrollIndicator={false} style={styles.bigscroll}>
-
               <View style={styles.header}>
                 <View style={styles.header_row}>
-                  <IconButton style={styles.icon_header} onPress={() => navigation.navigate('TaskPage')}  icon={props => <Icon   name="home" {...props} color="#FEFEFE"/>} />
+                  <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="home" {...props} color="#FEFEFE"/>} />
                   <Text style={styles.title}>Главная</Text>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                  <IconButton style={styles.icon_header}  icon={props => <Icon   name="account" {...props} color="#FEFEFE"/>} />
-                </TouchableOpacity>
-                
+                <IconButton style={styles.icon_header} onPress={() => navigation.navigate('Profile')} icon={props => <Icon   name="account" {...props} color="#FEFEFE"/>} />
               </View>
+
+              
 
               <Text style={styles.h2}>Твои доски</Text>
             
@@ -105,9 +103,9 @@ import CardTask_home from '../Widget/CardTask_home';
           display: 'flex',
           flexDirection: 'row',
           marginTop: 53,
-          width: 342,
           justifyContent: 'space-between',
-          marginLeft: 24
+          marginLeft: 14,
+          verticalAlign: 'middle'
         },
   
         header_row:{
@@ -116,8 +114,9 @@ import CardTask_home from '../Widget/CardTask_home';
         },
 
         icon_header:{
-          width: 30,
-          height: 30, 
+          width: 40,
+          height: 40,
+          marginRight: 14, 
   
         },
   
@@ -125,7 +124,8 @@ import CardTask_home from '../Widget/CardTask_home';
           fontSize: 24,
           fontWeight: 600,
           color: '#FEFEFE',
-          marginLeft: 12,
+          marginLeft: -10,
+          marginTop: 5,
         },
 
         h2:{

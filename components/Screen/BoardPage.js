@@ -1,7 +1,7 @@
 import {
     StyleSheet,
     Text,
-    View,  Modal, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
+    View,  Modal, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity
   } from 'react-native';
   import { CheckBox } from '@rneui/themed';
   import React, {useState} from 'react';
@@ -50,16 +50,16 @@ import {
                 <View style={styles.item_on}>
                     <Text style={styles.title_list}>Документация</Text>
                 </View>
-                <View style={styles.item}>
+                <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('BoardList')}>
                     <Text style={styles.title_list}>Дизайн</Text>
-                </View>
+                </TouchableOpacity>
                 </View>
 
                 </ScrollView>
   
                 
                 
-                <BoardList/>
+                <BoardList navigation={navigation}/>
 
 
   

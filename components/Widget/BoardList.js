@@ -6,7 +6,7 @@ import {
   import React from 'react';
   import { Stack, IconButton } from "@react-native-material/core";
   import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import CardTask_board from './CardTask_board';
+  import CardTask_board from './CardTask_board';
   
   
   function BoardList({ navigation }) {
@@ -16,20 +16,20 @@ import CardTask_board from './CardTask_board';
               
                 <View style={styles.header}>
                 <Text style={styles.header_text}>Документация</Text>
-                <IconButton style={styles.icon_header}  icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
+                <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')} icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
               </View>
-                <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
+                <View  style={styles.body}>
 
-                <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
-                    <CardTask_board/>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate('TaskPage')}>
-                    <CardTask_board />
-              </TouchableOpacity>
+                  <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('TaskPage')}>
+                    <CardTask_board navigation={navigation}/>
+                  </TouchableOpacity>
+                    
+                  <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('TaskPage')}>
+                    <CardTask_board navigation={navigation}/>
+                    </TouchableOpacity>
                     
 
-                </ScrollView>
+                </View>
 
               
              
@@ -44,12 +44,14 @@ import CardTask_board from './CardTask_board';
     BoardList:{
         backgroundColor: "#CDDCA1",
         width: 342,
-        height: 549,
         marginTop: 29,
         borderRadius: 30,
         display: "flex",
         flexDirection: "column",
         
+    },
+    task:{
+      paddingBottom: 16,
     },
 
     header:{
