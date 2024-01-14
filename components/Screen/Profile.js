@@ -39,7 +39,7 @@ function Profile({ navigation }) {
             <Text style={styles.btn_text}>Редактировать</Text>
             </Pressable>
 
-            <Pressable style={styles.btn} onPress={() => navigation.navigate('Sign_in')}>
+            <Pressable style={styles.btn} onPress={() => navigation.navigate('FriendsPage')}>
             <Text style={styles.btn_text}>Друзья</Text>
             </Pressable>
         </View>

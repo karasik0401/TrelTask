@@ -49,7 +49,7 @@ function Sign_in({navigation}) {
         />
         
         <View style={styles.btnContainer}>
-        <Pressable style={styles.btn} onPress={() => navigation.navigate('Profile')}>
+        <Pressable style={styles.btn} onPress={() => navigation.navigate('HomePage')}>
           <Text style={styles.btn_text}>Войти</Text>
         </Pressable>
 

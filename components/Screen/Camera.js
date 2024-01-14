@@ -4,12 +4,9 @@ import { View, Text, StyleSheet, Image, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 function Camera() {
-  // The path of the picked image
   const [pickedImagePath, setPickedImagePath] = useState('');
 
-  // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
-    // Ask the user for the permission to access the media library 
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissionResult.granted === false) {
@@ -28,9 +25,8 @@ function Camera() {
     }
   }
 
-  // This function is triggered when the "Open camera" button pressed
   const openCamera = async () => {
-    // Ask the user for the permission to access the camera
+   
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
 
     if (permissionResult.granted === false) {
@@ -40,7 +36,7 @@ function Camera() {
 
     const result = await ImagePicker.launchCameraAsync();
 
-    // Explore the result
+   
     console.log(result);
 
     if (!result.cancelled) {
@@ -48,6 +44,7 @@ function Camera() {
       console.log(result.uri);
     }
   }
+  
 
   return (
     <View style={styles.screen}>

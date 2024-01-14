@@ -15,7 +15,10 @@ import Camera from '../components/Screen/Camera';
 import BoardPage from '../components/Screen/BoardPage';
 import BoardList from '../components/Widget/BoardList';
 import CardTask_board from '../components/Widget/CardTask_board';
-
+import My_Tasks from '../components/Screen/My_Tasks';
+import My_Boards from '../components/Screen/My_Boards';
+import CardBoard_List from '../components/Widget/CardBoard_List';
+import FriendsPage from '../components/Screen/FriendsPage';
 
 
 const Stack = createStackNavigator()
@@ -88,6 +91,28 @@ function MainStackNavigator() {
           headerShown: false,
           headerLeft: () => null,}}
         />
+    <Stack.Screen
+          name='My_Tasks'
+          component={My_Tasks}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+    <Stack.Screen
+          name='My_Boards'
+          component={My_Boards}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+    <Stack.Screen
+          name='CardBoard_List'
+          component={CardBoard_List}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
 
     <Stack.Screen
           name='Profile'
@@ -96,7 +121,13 @@ function MainStackNavigator() {
           headerShown: false,
           headerLeft: () => null,}}
         />
-
+    <Stack.Screen
+          name='FriendsPage'
+          component={FriendsPage}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
 
 
     <Stack.Screen
