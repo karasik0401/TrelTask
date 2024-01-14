@@ -20,7 +20,7 @@ const handleSubmit = () => {
     loginUser(userData.username, userData.password)
     .then((res) => {
       if (res) {
-        navigation.navigate('MainPage')
+        navigation.navigate('HomePage')
       }
     })
     .catch((err) => {
