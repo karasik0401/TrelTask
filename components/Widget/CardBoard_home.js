@@ -6,6 +6,7 @@ import {
   import React from 'react';
   import { Stack, IconButton } from "@react-native-material/core";
   import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+  import * as Progress from 'react-native-progress';
   
   
   function CardBoard_home({ route }) {
@@ -30,6 +31,8 @@ import {
             </View>
 
             <View style={styles.row}>
+            
+
             <View style={styles.row_circl}>
                 <View style={styles.circl}></View>
                 <View style={styles.circl}></View>
@@ -37,12 +40,7 @@ import {
                 <View style={styles.circl}></View>
             </View>
 
-            <View style={styles.procent}>
-                <View style={styles.circl_min}>
-                    <Text style={styles.procent_txt}>42</Text>
-                </View>
-                
-            </View>
+            <Progress.Circle size={50} color={'#EB5093'} unfilledColor={'#252525'} fontSize={16} borderWidth={0} showsText={true} thickness={12} progress={0.82} />
             </View>
             
 

@@ -21,6 +21,7 @@ import FriendsPage from '../components/Screen/FriendsPage';
 import AddFriends from '../components/Widget/AddFriends';
 import AddChapter from '../components/Widget/AddChapter';
 import AddTask from '../components/Screen/AddTask';
+import AddBoard from '../components/Screen/AddBoard';
 
 
 const Stack = createStackNavigator()
@@ -168,6 +169,14 @@ function MainStackNavigator() {
         <Stack.Screen
           name='AddTask'
           component={AddTask}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+
+<Stack.Screen
+          name='AddBoard'
+          component={AddBoard}
           options={{title: ' ',
           headerShown: false,
           headerLeft: () => null,}}
