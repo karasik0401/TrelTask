@@ -11,7 +11,6 @@ import CardTask_home from '../components/Widget/CardTask_home';
 import Sign_up from '../components/Screen/Sign_up';
 import Sign_in from '../components/Screen/Sign_in';
 import Profile from '../components/Screen/Profile';
-import Camera from '../components/Screen/Camera';
 import BoardPage from '../components/Screen/BoardPage';
 import BoardList from '../components/Widget/BoardList';
 import CardTask_board from '../components/Widget/CardTask_board';
@@ -19,6 +18,9 @@ import My_Tasks from '../components/Screen/My_Tasks';
 import My_Boards from '../components/Screen/My_Boards';
 import CardBoard_List from '../components/Widget/CardBoard_List';
 import FriendsPage from '../components/Screen/FriendsPage';
+import AddFriends from '../components/Widget/AddFriends';
+import AddChapter from '../components/Widget/AddChapter';
+import AddTask from '../components/Screen/AddTask';
 
 
 const Stack = createStackNavigator()
@@ -37,13 +39,7 @@ function MainStackNavigator() {
           headerShown: false,
           headerLeft: () => null,}}
         />
-    <Stack.Screen
-          name='Camera'
-          component={Camera}
-          options={{title: ' ',
-          headerShown: false,
-          headerLeft: () => null,}}
-        />
+
     <Stack.Screen
         name='CardTask_board'
         component={CardTask_board}
@@ -154,7 +150,28 @@ function MainStackNavigator() {
           headerShown: false,
           headerLeft: () => null,}}
         />
+        <Stack.Screen
+          name='AddFriends'
+          component={AddFriends}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
 
+<Stack.Screen
+          name='AddChapter'
+          component={AddChapter}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
+        <Stack.Screen
+          name='AddTask'
+          component={AddTask}
+          options={{title: ' ',
+          headerShown: false,
+          headerLeft: () => null,}}
+        />
     
       
     </Stack.Navigator>

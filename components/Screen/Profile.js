@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { IconButton, TextInput } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from "react-dom";
+import * as ImagePicker from "expo-image-picker";
 
 
 import { StyleSheet, Text, Image, View, ScrollView, Button,Pressable, Alert, SafeAreaView, } from 'react-native';
@@ -12,7 +13,21 @@ import { StyleSheet, Text, Image, View, ScrollView, Button,Pressable, Alert, Saf
 function Profile({ navigation }) {
       
     const [userState, setUserState] = React.useState({});
+    const [image, setImage] = useState(null);
 
+    const pickImage = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        quality: 1,
+      });
+  
+      console.log(result);
+  
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      }
+    };
     
 
     
@@ -22,20 +37,16 @@ function Profile({ navigation }) {
     <View style={styles.container}>
         
 
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-
         <Image style={styles.photo}/>
 
         <View style={styles.rec_one}>
-          <View style={styles.img}>
-
-          </View>
+        {image && <Image source={{ uri: image }} style={styles.img} />}
           <Text style={styles.login}>Анастасия</Text>
 
           <Text style={styles.email}>#04</Text>
 
           <View style={styles.rec_t}>
-            <Pressable style={styles.btn} onPress={() => navigation.navigate('Camera')}>
+            <Pressable style={styles.btn} onPress={pickImage}>
             <Text style={styles.btn_text}>Редактировать</Text>
             </Pressable>
 
@@ -50,8 +61,7 @@ function Profile({ navigation }) {
         </View>
         
         
-        
-        </ScrollView>
+ 
 
         
 
@@ -70,15 +80,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#CDDCA1',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 844,
+    height: '100%',
   }, 
   body:{
     zIndex: 1,
     
   },
   rec_one:{
-    height: 648,
-    width:390,
+    height: 648+9,
+    width:'100%',
     marginTop: 196,
     backgroundColor:"#1C1C1C",
     borderTopRightRadius: 40,

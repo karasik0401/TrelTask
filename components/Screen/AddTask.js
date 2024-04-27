@@ -5,26 +5,19 @@ import {
   Modal,
   ScrollView,
   TouchableOpacity,
-  Image,
-  FlatList,
-  Alert,
   TextInput,
   Pressable,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { CheckBox } from "@rneui/themed";
 import React, { useState } from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import CheckList from "../Widget/CheckList";
+import AddCheckList from "../Widget/AddCheckList";
 import AddConsumer from "../Widget/AddConsumer";
 
-function TaskPage({ navigation }) {
-  const [number, onChangeNumber] = React.useState("");
-
+function AddTask({ navigation }) {
+  const [userData, setUserData] = React.useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleConsumer, setModalVisibleConsumer] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -43,6 +36,13 @@ function TaskPage({ navigation }) {
     hideDatePicker();
   };
 
+  const onChangeInput = (e, name) => {
+    setUserData({
+      ...userData,
+      [name]: e.nativeEvent.text,
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -51,20 +51,45 @@ function TaskPage({ navigation }) {
             style={styles.icon_header}
             onPress={() => navigation.navigate("HomePage")}
             icon={(props) => (
-              <Icon name="arrow-left-circle" {...props} color="#FEFEFE" />
+              <Icon name="arrow-left" {...props} color="#1C1C1C" />
             )}
           />
-          <Text style={styles.title}>Название задачи</Text>
         </View>
 
+        <IconButton
+          style={styles.icon_header_add}
+          icon={(props) => <Icon name="arrow-up" {...props} color="#FEFEFE" />}
+        />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-        <Text style={styles.discription}>
-          Сделать прототип приложения и создать дизайн. Подобрать цвета,
-          элементы. Подготовить макет к верстке.
-        </Text>
+      <TextInput
+        style={styles.title}
+        onChange={(e) => onChangeInput(e)}
+        placeholder="Название задачи"
+        fontSize={24}
+        type="text"
+        placeholderTextColor="#828282"
+        id={1}
+      />
 
-        <CheckList />
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
+        <TextInput
+          style={styles.discription}
+          onChange={(e) => onChangeInput(e)}
+          placeholder="Введите описание"
+          fontSize={16}
+          editable
+          returnKeyType="done"
+          multiline={true}
+          blurOnSubmit={true}
+          onSubmitEditing={() => {
+            Keyboard.dismiss();
+          }}
+          type="text"
+          placeholderTextColor="#828282"
+          id={2}
+        />
+
+        <AddCheckList />
 
         <View style={styles.footerTask}>
           <View style={styles.footerTask_row}>
@@ -316,7 +341,6 @@ const styles = StyleSheet.create({
     width: 393,
     height: 40,
     paddingHorizontal: 16,
-    marginBottom: 8,
   },
 
   header_row: {
@@ -329,11 +353,12 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     color: "#FEFEFE",
     marginLeft: 12,
+    marginBottom: 16,
   },
 
   discription: {
     width: 342,
-    marginTop: 32,
+    marginTop: 0,
     color: "#FEFEFE",
     fontSize: 16,
     fontWeight: 400,
@@ -386,40 +411,15 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
 
-  footer: {
-    position: "absolute",
-    justifyContent: "center",
-    alignSelf: "center",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: 390,
-    marginTop: -80,
-    backgroundColor: "#1C1C1C",
-    paddingTop: 8,
-    height: 80,
-  },
-
-  icon_footer: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-  },
-
-  icon: {
-    width: 24,
-    height: 24,
-    borderRadius: 50,
-    backgroundColor: "#FEFEFE",
-  },
   icon_header: {
     width: 30,
     height: 30,
+    backgroundColor: "#FEFEFE",
   },
-
-  icon_chb: {
-    width: 22,
-    height: 22,
+  icon_header_add: {
+    width: 30,
+    height: 30,
+    backgroundColor: "#EB5093",
   },
 
   icon_taskfooter: {
@@ -427,12 +427,7 @@ const styles = StyleSheet.create({
     height: 30,
     marginRight: 12,
   },
-  icon_title: {
-    width: 26,
-    height: 26,
-    borderRadius: 50,
-    backgroundColor: "#8CA5AD",
-  },
+
 });
 
-export default TaskPage;
+export default AddTask;

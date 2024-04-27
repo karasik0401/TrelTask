@@ -69,7 +69,7 @@ import CardTask_home from '../Widget/CardTask_home';
       container: {
         display: 'flex',
         flexDirection: 'column',
-        height: 844,
+        height: '100%',
         backgroundColor: '#1c1c1c'
     
       
@@ -89,12 +89,15 @@ import CardTask_home from '../Widget/CardTask_home';
           },
 
         header:{
-          display: 'flex',
-          flexDirection: 'row',
-          marginTop: 53,
-          marginLeft: 24,
-          verticalAlign: 'middle',
-          justifyContent: 'flex-start'
+          display: "flex",
+          flexDirection: "row",
+          marginTop: 60,
+          justifyContent: 'flex-start',
+          verticalAlign: "middle",
+          width: 393,
+          height: 40,
+          paddingHorizontal: 16,
+          marginBottom: 8,
         },
   
         header_row:{

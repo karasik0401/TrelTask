@@ -16,7 +16,7 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
             <IconButton  onPress={() => navigation.navigate('HomePage')} icon={props => <Icon  name="home" {...props} color="#FEFEFE"/>} />
             <IconButton  onPress={() => navigation.navigate('My_Tasks')} icon={props => <Icon  name="checkbox-marked-circle-outline" {...props} color="#FEFEFE"/>} />
             <IconButton  onPress={() => navigation.navigate('My_Boards')} icon={props => <Icon  name="trello" {...props} color="#FEFEFE"/>} />
-            <IconButton style={styles.btn}  onPress={() => navigation.navigate('TaskPage')} icon={props => <Icon  name="plus" {...props} color="#FEFEFE"/>} />
+            <IconButton style={styles.btn}  onPress={() => navigation.navigate('AddTask')} icon={props => <Icon  name="plus" {...props} color="#FEFEFE"/>} />
         
           </View>
       );

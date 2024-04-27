@@ -1,84 +1,88 @@
 import {
-    StyleSheet,
-    Text,
-    View, ScrollView, TouchableOpacity, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
-  } from 'react-native';
-  import React from 'react';
-  import { Stack, IconButton } from "@react-native-material/core";
-  import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-  import CardTask_board from './CardTask_board';
-  
-  
-  function BoardList({ navigation }) {
-    
-      return (
-              <View style={styles.BoardList}> 
-              
-                <View style={styles.header}>
-                <Text style={styles.header_text}>Документация</Text>
-                <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')} icon={props => <Icon   name="checkbox-marked-circle-outline" {...props} color="#EB5093"/>} />
-              </View>
-                <View  style={styles.body}>
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
+import React from "react";
+import { Stack, IconButton } from "@react-native-material/core";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import CardTask_board from "./CardTask_board";
 
-                  <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('TaskPage')}>
-                    <CardTask_board navigation={navigation}/>
-                  </TouchableOpacity>
-                    
-                  <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('TaskPage')}>
-                    <CardTask_board navigation={navigation}/>
-                    </TouchableOpacity>
-                    
+function BoardList({ navigation }) {
+  return (
+    <View style={styles.BoardList}>
+      <View style={styles.header}>
+        <Text style={styles.header_text}>Документация</Text>
+      </View>
+      <View style={styles.body}>
+        <TouchableOpacity
+          style={styles.task}
+          onPress={() => navigation.navigate("TaskPage")}
+        >
+          <CardTask_board navigation={navigation} />
+        </TouchableOpacity>
 
-                </View>
+        <TouchableOpacity
+          style={styles.task}
+          onPress={() => navigation.navigate("TaskPage")}
+        >
+          <CardTask_board navigation={navigation} />
+        </TouchableOpacity>
+      </View>
 
-              
-             
-              </View>
-          
-      );
-  
-  }
-  
-  const styles = StyleSheet.create({
-    
-    BoardList:{
-        backgroundColor: "#CDDCA1",
-        width: 342,
-        marginTop: 29,
-        borderRadius: 30,
-        display: "flex",
-        flexDirection: "column",
-        
-    },
-    task:{
-      paddingBottom: 16,
-    },
+      <IconButton
+        style={styles.icon_plus}
+        onPress={() => navigation.navigate("AddTask")}
+        icon={(props) => <Icon name="plus" {...props} color="#fefefe" />}
+      />
+    </View>
+  );
+}
 
-    header:{
-        display: "flex",
-        flexDirection: "row",
-        width: 342,
-        justifyContent: "flex-end",
-        marginTop: 16,
-        alignItems: "center",
-        height: 19,
+const styles = StyleSheet.create({
+  BoardList: {
+    backgroundColor: "#CDDCA1",
+    width: 342,
+    marginTop: 29,
+    borderRadius: 30,
+    display: "flex",
+    flexDirection: "column",
+  },
 
-    },
-    body:{
-        alignSelf: 'center'
-    },
+  icon_plus: {
+    width: 44,
+    height: 44,
+    borderRadius: 40,
+    backgroundColor: "#EB5093",
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  task: {},
 
-    header_text:{
-        marginRight:67,
-        fontSize: 16,
-        color:"#1c1c1c",
-        fontWeight: "600",
-    },
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    width: 342,
+    justifyContent: "center",
+    marginTop: 16,
+    alignItems: "center",
+    height: 19,
+  },
+  body: {
+    alignSelf: "center",
+    gap: 16,
+    marginVertical: 16,
+  },
 
-    icon_header:{
-    },
-      
-        
-  })
-  
-  export default BoardList
+  header_text: {
+    fontSize: 16,
+    color: "#1c1c1c",
+    fontWeight: "600",
+    alignSelf: "center",
+  },
+
+  icon_header: {},
+});
+
+export default BoardList;

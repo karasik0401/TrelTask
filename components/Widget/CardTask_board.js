@@ -56,7 +56,6 @@ import {
           paddingLeft: 12,
           paddingVertical: 24,
 
-          marginTop: 26,
         },
 
         title:{

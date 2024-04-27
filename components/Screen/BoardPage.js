@@ -1,221 +1,307 @@
 import {
-    StyleSheet,
-    Text,
-    View,  Modal, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity
-  } from 'react-native';
-  import { CheckBox } from '@rneui/themed';
-  import React, {useState} from 'react';
-  import { Stack, IconButton } from "@react-native-material/core";
-  import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-  
-  import BoardList from '../Widget/BoardList';
-  
-  
-  function BoardPage({ navigation }) {
-      const [number, onChangeNumber] = React.useState('');
-  
-      const [modalVisible, setModalVisible] = useState(false);
-    
-      return (
-          <View style={styles.container} >
-              <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-  
-                <View style={styles.header}>
-                  <View style={styles.header_row}>
-                    <IconButton style={styles.icon_header} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="arrow-left-circle" {...props} color="#FEFEFE"/>} />
-                    <Text style={styles.title}>I remember</Text>
-                  </View>
-                  
-                  <IconButton style={styles.icon_header}  icon={props => <Icon   name="dots-vertical" {...props} color="#FEFEFE"/>} />
-                </View>
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  ScrollView,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
+import { Stack, IconButton } from "@react-native-material/core";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import BoardList from "../Widget/BoardList";
+import AddFriends from "../Widget/AddFriends";
+import AddChapter from "../Widget/AddChapter";
 
-                <ScrollView  showsHorizontalScrollIndicator={false} horizontal={true} style={styles.body}>
-                <View style={styles.comand}>
-                <IconButton style={styles.icon_comand} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="plus" {...props} color="#1C1C1C"/>} />
-                <View style={styles.person}>
-                    <View style={styles.img}></View>
-                    <Text style={styles.name}>Анастасия</Text>
-                </View>
-                <View style={styles.person}>
-                    <View style={styles.img}></View>
-                    <Text style={styles.name}>Максим</Text>
-                </View>
-                </View>
+function BoardPage({ navigation }) {
 
-                </ScrollView> 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleChapter, setModalVisibleChapter] = useState(false);
 
-                <ScrollView  showsHorizontalScrollIndicator={false} horizontal={true} style={styles.body}>
-                <View style={styles.list}>
-                <IconButton style={styles.icon_list} onPress={() => navigation.navigate('HomePage')}  icon={props => <Icon   name="plus" {...props} color="#FEFEFE"/>} />
-                <View style={styles.item_on}>
-                    <Text style={styles.title_list}>Документация</Text>
-                </View>
-                <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('BoardList')}>
-                    <Text style={styles.title_list}>Дизайн</Text>
-                </TouchableOpacity>
-                </View>
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.header_row}>
+          <IconButton
+            style={styles.icon_header}
+            onPress={() => navigation.navigate("HomePage")}
+            icon={(props) => (
+              <Icon name="arrow-left-circle" {...props} color="#FEFEFE" />
+            )}
+          />
+          <Text style={styles.title}>I remember</Text>
+        </View>
 
-                </ScrollView>
-  
-                
-                
-                <BoardList navigation={navigation}/>
+        <IconButton
+          style={styles.icon_header}
+          icon={(props) => (
+            <Icon name="dots-vertical" {...props} color="#FEFEFE" />
+          )}
+        />
+      </View>
 
-
-  
-  
-   
-  
-                
-  
-              </ScrollView>
-              
-  
-             
-                  
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          style={styles.body}
+        >
+          <View style={styles.comand}>
+            <IconButton
+              style={styles.icon_comand}
+              onPress={() => setModalVisible(true)}
+              icon={(props) => <Icon name="plus" {...props} color="#1C1C1C" />}
+            />
+            <View style={styles.person}>
+              <View style={styles.img}></View>
+              <Text style={styles.name}>Анастасия</Text>
+            </View>
+            <View style={styles.person}>
+              <View style={styles.img}></View>
+              <Text style={styles.name}>Максим</Text>
+            </View>
           </View>
-      );
-  
-  }
-  
-  const styles = StyleSheet.create({
-      container: {
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          height: 844,
-          backgroundColor: '#1C1C1C'
-      
-        },
+        </ScrollView>
 
-         icon_comand:{
-            width: 30,
-          height: 30,
-          marginTop: 7,
-          backgroundColor: "#fefefe"
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          style={styles.body}
+        >
+          <View style={styles.list}>
+            <IconButton
+              style={styles.icon_list}
+              onPress={() => setModalVisibleChapter(true)}
+              icon={(props) => <Icon name="plus" {...props} color="#FEFEFE" />}
+            />
+            <View style={styles.item_on}>
+              <Text style={styles.title_list}>Документация</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => navigation.navigate("BoardList")}
+            >
+              <Text style={styles.title_list}>Дизайн</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        <BoardList navigation={navigation} />
+      </ScrollView>
+
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <AddFriends />
+          </View>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => setModalVisible(!modalVisible)}
+          >
+            <Text style={styles.textStyle}>Готово</Text>
+          </Pressable>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleChapter}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalViewChapter}>
+            <AddChapter />
+          </View>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => setModalVisibleChapter(!modalVisibleChapter)}
+          >
+            <Text style={styles.textStyle}>Добавить</Text>
+          </Pressable>
+        </View>
+      </Modal>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    height: "100%",
+    backgroundColor: "#1C1C1C",
+  },
+
+  icon_comand: {
+    width: 30,
+    height: 30,
+    marginTop: 7,
+    backgroundColor: "#fefefe",
+  },
+
+  modalViewChapter: {
+    marginTop: 250,
+    marginHorizontal: 40,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  modalView: {
+    marginTop: 200,
+    marginHorizontal: 40,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    paddingVertical: 16,
+    marginHorizontal: 40,
+    marginTop: 24,
+  },
+  buttonOpen: {},
+  buttonClose: {
+    backgroundColor: "#fff",
+  },
+  textStyle: {
+    color: "#333",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  icon_list: {
+    width: 30,
+    height: 30,
+    marginTop: 0,
+    backgroundColor: "#EB5093",
+  },
+
+  img: {
+    width: 30,
+    height: 30,
+    backgroundColor: "#fff",
+    borderRadius: 100,
+    marginLeft: 12,
+    marginBottom: 4,
+    marginTop: 4,
+    marginRight: 4,
+  },
+  item_on: {
+    display: "flex",
+    flexDirection: "row",
+    height: 30,
+    borderRadius: 15,
+    borderColor: "#EB5093",
+    borderWidth: 1,
+    alignContent: "center",
+    marginLeft: 8,
+    backgroundColor: "#EB5093",
+  },
+
+  title_list: {
+    fontSize: 18,
+    color: "#fefefe",
+    marginBottom: 4,
+    marginTop: 2,
+    marginRight: 12,
+    marginLeft: 12,
+  },
+
+  item: {
+    display: "flex",
+    flexDirection: "row",
+    height: 30,
+    borderRadius: 15,
+    borderColor: "#EB5093",
+    borderWidth: 1,
+    alignContent: "center",
+    marginLeft: 8,
+  },
+
+  list: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 12,
+  },
+
+  name: {
+    fontSize: 18,
+    color: "#fefefe",
+    marginBottom: 8,
+    marginTop: 8,
+    marginRight: 12,
+  },
+
+  person: {
+    display: "flex",
+    flexDirection: "row",
+    height: 40,
+    borderRadius: 15,
+    borderColor: "#fefefe",
+    borderWidth: 1,
+    alignContent: "center",
+    marginLeft: 8,
+  },
+
+  comand: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 25 - 20,
+  },
+
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 60,
+    justifyContent: "space-between",
+    verticalAlign: "middle",
+    width: 393,
+    height: 40,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+
+  header_row: {
+    display: "flex",
+    flexDirection: "row",
+  },
+
+  title: {
+    fontSize: 24,
+    fontWeight: 600,
+    color: "#FEFEFE",
+    marginLeft: 12,
+  },
 
 
-        },
+  icon_header: {
+    width: 30,
+    height: 30,
+  },
+});
 
-        icon_list:{
-            width: 30,
-            height: 30,
-            marginTop: 0,
-            backgroundColor: "#EB5093"
-        },
-
-        img:{
-            width:30,
-            height: 30,
-            backgroundColor: "#fff",
-            borderRadius: 100,
-            marginLeft: 12,
-            marginBottom:4,
-            marginTop: 4,
-            marginRight: 4,
-
-        },
-        item_on:{
-            display:"flex",
-            flexDirection:"row",
-            height: 30,
-            borderRadius: 15,
-            borderColor: "#EB5093",
-            borderWidth: 1,
-            alignContent:"center",
-            marginLeft:8,
-            backgroundColor:"#EB5093"
-        },
-
-        title_list:{
-            fontSize: 18,
-            color: "#fefefe",
-            marginBottom:4,
-            marginTop: 2,
-            marginRight: 12,
-            marginLeft: 12,
-        },
-
-        item:{
-            display:"flex",
-            flexDirection:"row",
-            height: 30,
-            borderRadius: 15,
-            borderColor: "#EB5093",
-            borderWidth: 1,
-            alignContent:"center",
-            marginLeft:8,
-
-        },
-
-        list:{
-            display: 'flex',
-            flexDirection: "row",
-            marginTop:12,
-        },
-
-        name:{
-            fontSize: 18,
-            color: "#fefefe",
-            marginBottom:8,
-            marginTop: 8,
-            marginRight: 12,
-        },
-
-        person:{
-            display:"flex",
-            flexDirection:"row",
-            height: 40,
-            borderRadius: 15,
-            borderColor: "#fefefe",
-            borderWidth: 1,
-            alignContent:"center",
-            marginLeft:8,
-
-        },
-
-        comand:{
-            display: 'flex',
-            flexDirection: "row",
-            marginTop:25,
-        },
-  
-
-        header:{
-          display: 'flex',
-          flexDirection: 'row',
-          marginTop: 53,
-          width: 342,
-          justifyContent: 'space-between'
-        },
-  
-        header_row:{
-          display: 'flex',
-          flexDirection: 'row',
-        },
-  
-        title:{
-          fontSize: 24,
-          fontWeight: 600,
-          color: '#FEFEFE',
-          marginLeft: 12,
-        },     
-  
-        icon:{
-          width: 24,
-          height: 24,
-          borderRadius: 50,
-          backgroundColor: '#FEFEFE',
-  
-        },
-        icon_header:{
-          width: 30,
-          height: 30, 
-  
-        },
-  
-   
-  
-  })
-  
-  export default BoardPage
+export default BoardPage;
