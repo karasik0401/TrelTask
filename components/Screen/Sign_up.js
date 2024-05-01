@@ -2,27 +2,80 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 
 import { StyleSheet, Text, View, TextInput,Button,Pressable, Alert, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import {REACT_APP_API_URL} from "@env";
 
+const API_URL = REACT_APP_API_URL
+console.log(API_URL)
 
 function Sign_up({navigation}) {
   
     const [userData, setUserData] = React.useState({});
+    const checkResponse = (res) => {
+      if (res.ok) {
+        return (res);
+      }
+      return res.json().then((err) => Promise.reject(err));
+    };
+  
+    const registerUser = (username, email, password, re_password) => {
+      return fetch(`${API_URL}/api/users/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password, re_password}),
+      }).then(checkResponse);
+    };
+  
+  
+    const checkValid = () => {
+      if (!userData.username) {
+        Alert.alert("Поле с логином является обязательным");
+        return false;
+      }
+      if (!userData.password) {
+        Alert.alert("Поле с паролем является обязательным");
+        return false;
+      }
+      if (!userData.re_password) {
+        Alert.alert("Поле с повторным вводом пароля является обязательным");
+        return false;
+      }
+      return true;
+    };
+  
+  
+    const handleSubmit = () => {
+      checkValid() &&
+      registerUser(userData.username, userData.email, userData.password, userData.re_password, 1)
+        .then((res) => {
+          if (res.status === 201) {
+            navigation.navigate('Sign_in')
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          if (err.non_field_errors){
+            Alert.alert(err.non_field_errors[0]);
+          }
+          else if (err.email){
+            Alert.alert(err.email[0]);
+          }
+          else if (err.password){
+            Alert.alert(err.password[0]);
+          }
+          else if (err.username){
+            Alert.alert(err.username[0]);
+          }
+        });
+  
+      };
+  
     
-
-
-    
-
     const onChangeInput = (e, name) => {
         setUserData({
           ...userData,
           [name]: e.nativeEvent.text,
         });
       };
-
-      
-      
-
-    
   
   return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -33,7 +86,7 @@ function Sign_up({navigation}) {
           <View>
             <TextInput
               style={styles.Login}
-              onChange={e => onChangeInput(e)}
+              onChange={e => onChangeInput(e, 'username')}
               placeholder="Логин"
               placeholderTextColor="#828282"
               type="text"
@@ -41,7 +94,7 @@ function Sign_up({navigation}) {
             />
             <TextInput
               style={styles.Mail}
-              onChange={e => onChangeInput(e)}
+              onChange={e => onChangeInput(e, 'email')}
               placeholder="Почта"
               placeholderTextColor="#828282"
               id = {2}
@@ -52,7 +105,7 @@ function Sign_up({navigation}) {
               style={styles.Mail}
               secureTextEntry={true}
               textContentType={'password'}
-              onChange={e => onChangeInput(e)}
+              onChange={e => onChangeInput(e, 'password')}
               placeholder="Пароль"
               placeholderTextColor="#828282"
               id = {3}
@@ -61,13 +114,13 @@ function Sign_up({navigation}) {
               style={styles.Mail}
               secureTextEntry={true}
               textContentType={'password'}
-              onChange={e => onChangeInput(e)}
+              onChange={e => onChangeInput(e, 're_password')}
               placeholder="Пароль еще раз"
               placeholderTextColor="#828282"
               id = {4}
             />
             <View style={styles.btnContainer}>
-              <Pressable style={styles.btn} onPress={() => navigation.navigate('HomePage')}>
+              <Pressable style={styles.btn} onPress={handleSubmit}>
                 <Text style={styles.btn_text}>Зарегистрироваться</Text>
               </Pressable>
 

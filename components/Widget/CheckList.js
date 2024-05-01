@@ -77,22 +77,22 @@ function CheckList({ route }) {
           />
           <Text style={styles.check_title}>Чек-лист</Text>
         </View>
-        <IconButton
-          style={styles.icon_chb}
-          onPress={() => setModalVisibleCheckList(true)}
-          icon={(props) => (
-            <Icon
-              name="plus-circle-outline"
-              {...props}
-              size={28}
-              color="#1C1C1C"
-            />
-          )}
-        />
+        
       </View>
 
       {renderFlatList(products)}
-
+<IconButton
+          style={styles.icon_chb_add}
+          onPress={() => setModalVisibleCheckList(true)}
+          icon={(props) => (
+            <Icon
+              name="plus"
+              {...props}
+              size={28}
+              color="#fefefe"
+            />
+          )}
+        />
       <Modal
         animationType="slide"
         transparent={true}
@@ -243,9 +243,12 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 
-  icon_chb: {
+  icon_chb_add: {
     width: 30,
     height: 30,
+    alignSelf: 'center',
+    backgroundColor: "#EB5093",
+    marginTop: 10
   },
 
   icon_title: {

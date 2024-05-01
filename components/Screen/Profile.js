@@ -4,7 +4,10 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import React, { useState } from 'react';
 import { useHistory } from "react-dom";
 import * as ImagePicker from "expo-image-picker";
+import {useIsFocused} from "@react-navigation/native";
+import {REACT_APP_API_URL} from "@env";
 
+const API_URL = REACT_APP_API_URL
 
 import { StyleSheet, Text, Image, View, ScrollView, Button,Pressable, Alert, SafeAreaView, } from 'react-native';
 
@@ -29,6 +32,32 @@ function Profile({ navigation }) {
       }
     };
     
+    const checkResponse = (res) => {
+      if (res.ok) {
+        return (res.json());
+      }
+      return res.json().then((err) => Promise.reject(err));
+    };
+
+    const getUser = () => {
+        return fetch(`${API_URL}/api/users/me/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Token ${auth_token}`,
+          },
+        }).then(checkResponse)
+        .then((res) => setUserState(res))
+      };
+    const isFocused = useIsFocused();
+    React.useEffect(() => {
+        const token = auth_token;
+        if (token) {
+        getUser();
+        }
+    }, [isFocused]);
+
+    
 
     
 
@@ -40,10 +69,10 @@ function Profile({ navigation }) {
         <Image style={styles.photo}/>
 
         <View style={styles.rec_one}>
-        {image && <Image source={{ uri: image }} style={styles.img} />}
-          <Text style={styles.login}>Анастасия</Text>
+        {image && <Image source={userState.photo ? {uri: userState.photo} : require('../../img/Profile.png')} style={styles.img} />}
+          <Text style={styles.login}>{userState.username}</Text>
 
-          <Text style={styles.email}>#04</Text>
+          <Text style={styles.email}>{userState.id}</Text>
 
           <View style={styles.rec_t}>
             <Pressable style={styles.btn} onPress={pickImage}>

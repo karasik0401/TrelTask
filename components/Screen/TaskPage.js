@@ -13,14 +13,16 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ToastAndroid
 } from "react-native";
-import { CheckBox } from "@rneui/themed";
+import { Button, CheckBox } from "@rneui/themed";
 import React, { useState } from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import CheckList from "../Widget/CheckList";
 import AddConsumer from "../Widget/AddConsumer";
+import { color } from "@rneui/themed/dist/config";
 
 function TaskPage({ navigation }) {
   const [number, onChangeNumber] = React.useState("");
@@ -42,6 +44,11 @@ function TaskPage({ navigation }) {
     setSelectedDate(date);
     hideDatePicker();
   };
+
+  function onPressFunction() {
+    ToastAndroid.show("onPressFunction()",ToastAndroid.SHORT)
+  }
+
 
   return (
     <View style={styles.container}>
@@ -164,7 +171,18 @@ function TaskPage({ navigation }) {
 
           <View style={styles.footerTask_row}></View>
         </View>
+
+       
       </ScrollView>
+      
+ <Pressable onPress={onPressFunction} style={styles.pressableStyle}>
+          {({ pressed }) => (
+          <Text style={ pressed ? styles.pressedTextStyle : styles.unPressedTextStyle}>
+            {pressed ? 'Отменить выполнение' : 'Отметить как выполненное'}
+          </Text>
+        )}
+        </Pressable>
+
 
       <Modal
         animationType="slide"
@@ -219,6 +237,33 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+
+  pressableStyle:{
+    width: 269,
+    height: 40,
+    backgroundColor: '#EB5093',
+    borderRadius: 15,
+    verticalAlign: "middle",
+    display: "flex",
+    flexDirection: 'column',
+    alignItems: "center",
+    marginBottom: 62
+  },
+
+  pressedTextStyle:{
+    fontSize:18,
+    color: "#F5F5F5",
+    fontWeight: "500",
+    marginTop: 8
+
+  },
+
+  unPressedTextStyle:{
+    fontSize:18,
+    color: "#F5F5F5",
+    fontWeight: "500",
+    marginTop: 8
   },
 
   modalViewChapter: {
@@ -433,6 +478,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: "#8CA5AD",
   },
+
+
+
 });
 
 export default TaskPage;

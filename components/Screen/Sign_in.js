@@ -2,6 +2,11 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 
 import { StyleSheet, Text, View, TextInput,Button,Pressable, Alert, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {REACT_APP_API_URL} from "@env";
+
+const API_URL = REACT_APP_API_URL
+console.log(API_URL)
+
 
 
 
@@ -9,8 +14,55 @@ function Sign_in({navigation}) {
 
     const [userData, setUserData] = React.useState({});
 
+    const checkResponse = (res) => {
+      if (res.ok) {
+        return (res.json());
+      }
+      return res.json().then((err) => Promise.reject(err));
+    };
 
+    const loginUser = (username, password) => {
+      return fetch(`${API_URL}/api/auth/token/login/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      }).then(checkResponse)
+        .then((data) => {
+          if (data) {
+            global.auth_token = data.auth_token;
+            return data;
+          }
+          return null;
+        });
+    };
+
+    const checkValid = () => {
+      if (!userData.username) {
+        Alert.alert("Поле с логином является обязательным");
+        return false;
+      }
+      if (!userData.password) {
+        Alert.alert("Поле с паролем является обязательным");
+        return false;
+      }
+      return true;
+    };
     
+
+    const handleSubmit = () => {
+      checkValid() &&
+      loginUser(userData.username, userData.password)
+      .then((res) => {
+        if (res) {
+          navigation.navigate('HomePage')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        Alert.alert("Неверное имя пользователя или пароль");;
+        }
+      );
+    };
     
 
     const onChangeInput = (e, name) => {
@@ -32,7 +84,7 @@ function Sign_in({navigation}) {
         <View>
         <TextInput
         style={styles.Login}
-        onChange={e => onChangeInput(e)}
+        onChange={e => onChangeInput(e, "username")}
         placeholder="Логин"
         type="text"
         placeholderTextColor="#828282"
@@ -42,14 +94,14 @@ function Sign_in({navigation}) {
         <TextInput
         style={styles.Mail}
         secureTextEntry={true}
-        onChange={e => onChangeInput(e)}
+        onChange={e => onChangeInput(e, "password")}
         placeholder="Пароль"
         placeholderTextColor="#828282"
         id = {2}
         />
         
         <View style={styles.btnContainer}>
-        <Pressable style={styles.btn} onPress={() => navigation.navigate('HomePage')}>
+        <Pressable style={styles.btn} onPress={handleSubmit}>
           <Text style={styles.btn_text}>Войти</Text>
         </Pressable>
 
