@@ -4,9 +4,9 @@ from users.models import CustomUser
 
 
 PRIORITY = (
-    (0, "Низкий"),
-    (1, "Средний"),
-    (2, "Высокий")
+    (0, "#7BB558"),
+    (1, "#ED863B"),
+    (2, "#E55050")
 )
 
 

@@ -4,15 +4,45 @@ import {
     View, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity, SafeAreaView
   } from 'react-native';
 import { Feather, Entypo } from "@expo/vector-icons";
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import NavBar from '../Widget/NavBar';
 import CardBoard_List from '../Widget/CardBoard_List';
+import { useIsFocused } from '@react-navigation/native';
+import { REACT_APP_API_URL } from '@env';
+
+const API_URL = REACT_APP_API_URL;
   
   
   function My_Boards({ navigation }) {
+  const [boardList, setBoardList] = useState([]);
 
+  const fetchBoardData = async() => {
+    try {
+      const response = await fetch(`${API_URL}/api/boards/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Token ${auth_token}`,
+        },
+      });
+      const json = await response.json();
+      setBoardList(json);
+    }
+    catch (error) {
+      console.log(error);
+      }
+  };
+
+
+  const isFocused = useIsFocused();
+      useEffect(() => {
+        const token = auth_token;
+        if (token) {
+          fetchBoardData();
+        }
+    }, [isFocused]);
     
     
       return (
@@ -41,11 +71,13 @@ import CardBoard_List from '../Widget/CardBoard_List';
             </SafeAreaView>
 
           <ScrollView showsVerticalScrollIndicator={false} style={styles.bigscroll}>
-
-
-            <View style={styles.column}>
-                <CardBoard_List/>
-            </View>
+            <FlatList  style={styles.list}
+                  data={boardList}
+                  кey={(item) => item}
+                  renderItem={({item}) => (
+                  <TouchableOpacity onPress={() => navigation.navigate("BoardPage")}>
+                    <CardBoard_List board={item}/>
+                  </TouchableOpacity>)}/>
 
             </ScrollView>
 

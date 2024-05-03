@@ -1,52 +1,98 @@
 import {
-    StyleSheet,
-    Text,
-    View,
-    Pressable,
-    ScrollView,
-    FlatList,
-  } from "react-native";
-  import React from "react";
-  import { MaterialCommunityIcons } from "@expo/vector-icons";
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  ScrollView,
+  FlatList,
+} from "react-native";
+import React, { useState, useEffect }  from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useIsFocused } from '@react-navigation/native';
+import { REACT_APP_API_URL } from '@env';
+
+const API_URL = REACT_APP_API_URL;
   
-  const data = [
-    { id: 1, txt: "Петя", isChecked: false },
-    { id: 2, txt: "Вася", isChecked: false },
-    { id: 3, txt: "Саша", isChecked: false },
-    { id: 4, txt: "Влад", isChecked: false },
-    { id: 5, txt: "Петя", isChecked: false },
-    { id: 6, txt: "Вася", isChecked: false },
-    { id: 7, txt: "Саша", isChecked: false },
-    { id: 8, txt: "Влад", isChecked: false },
-  ];
   
-  function AddConsumer({ route }) {
-    const [products, setProducts] = React.useState(data);
+  function AddConsumer({task, onSave }) {
+    console.log(task)
+    const [board, setBoard] = useState({ participants: [] });
+    const [assignee, setAssignees] = useState({assignees: task.assignees});
   
     const handleChange = (id) => {
-      let temp = products.map((product) => {
-        if (id === product.id) {
-          return { ...product, isChecked: !product.isChecked };
-        }
-        return product;
-      });
-      setProducts(temp);
+      let tempParticipants = [...assignee.assignees];
+      const index = tempParticipants.indexOf(id);
+      if (index !== -1) {
+        tempParticipants.splice(index, 1);
+      } else {
+        tempParticipants.push(id);
+      }
+      setAssignees({assignees: tempParticipants});
     };
+
+    const handleSubmit = () => {
+      onSave(assignee);
+    };
+
+    const fetchBoardData = async() => {
+      try {
+        const response = await fetch(`${API_URL}/api/boards/${task.board_id}/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Token ${auth_token}`,
+          },
+        });
+        const json = await response.json();
+        setBoard({ participants: json.participants });
+      }
+      catch (error) {
+        console.log(error);
+        }
+    };
+
+    const fetchAssignData = async() => {
+      try {
+        const response = await fetch(`${API_URL}/api/tasks/${task.id}/for_update/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Token ${auth_token}`,
+          },
+        });
+        const json = await response.json();
+        setAssignees({ assignees: json.assignees });
+      }
+      catch (error) {
+        console.log(error);
+        }
+    };
+
+    const isFocused = useIsFocused();
+    useEffect(() => {
+      const token = auth_token;
+      if (token) {
+        fetchBoardData();
+        fetchAssignData();
+      }
+    
+  }, [isFocused]);
+
   
-    let selected = products.filter((product) => product.isChecked);
-  
-    const renderFlatList = (renderData) => {
+    const renderFlatList = (board, assignee) => {
+      console.log(assignee)
       return (
+        <View>
         <FlatList
           style={styles.container}
-          data={renderData}
+          data={board.participants}
           renderItem={({ item }) => (
             <View style={{ margin: 0 }}>
               <View style={styles.card}>
-                <Text style={styles.item}>{item.txt}</Text>
+                <Text style={styles.item}>{item.username}</Text>
                 <Pressable onPress={() => handleChange(item.id)}>
                   <MaterialCommunityIcons
-                    name={item.isChecked ? "close-circle" : "plus-circle-outline"}
+                    name={assignee.assignees.includes(item.id)? "close-circle" : "plus-circle-outline"}
                     size={28}
                     color="#EB5093"
                   />
@@ -55,6 +101,13 @@ import {
             </View>
           )}
         />
+        <Pressable
+              style={[styles.button]}
+              onPress={() => handleSubmit()}
+            >
+              <Text style={styles.textStyle}>Готово</Text>
+          </Pressable>
+          </View>
       );
     };
   
@@ -63,7 +116,7 @@ import {
         <Text style={styles.title}>Назначить участника</Text>
         <View style={styles.line}></View>
         <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-          {renderFlatList(products)}
+          {renderFlatList(board, assignee)}
         </ScrollView>
         <View></View>
       </View>

@@ -7,28 +7,36 @@ import {
   import { Stack, IconButton } from "@react-native-material/core";
   import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
+PRIORITY = {
+    0: "#7BB558",
+    1: "#ED863B",
+    2: "#E55050"
+}
+    
   
-  
-  
-  function CardTask_home({ route }) {
+  function CardTask_home(task) {
+    console.log(task)
     
       return (
           <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Прописать пользовательские требования</Text>
-                <Text style={styles.h2}>I remember</Text>
+                <Text style={styles.title}>{task.task.name}</Text>
+                <Text style={styles.h2}>{task.task.board_name}</Text>
             </View>
 
             
 
             <View style={styles.row}>
             <View style={styles.date}>
-                <Text style={styles.date}t>08.11.23</Text>
+                <Text style={styles.date}t>{task.task.deadline}</Text>
             </View>
 
-            <View style={styles.line}>
-                
-                
+            <View style={{
+                width: 194,
+                height: 10,
+                backgroundColor: PRIORITY[task.task.priority],
+                borderRadius: 15,
+            }}>
             </View>
             </View>
             

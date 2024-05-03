@@ -9,19 +9,33 @@ import {
   Pressable,
   Keyboard,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import AddCheckList from "../Widget/AddCheckList";
 import AddConsumer from "../Widget/AddConsumer";
+import { useIsFocused } from '@react-navigation/native';
+import { REACT_APP_API_URL } from '@env';
 
-function AddTask({ navigation }) {
+const API_URL = REACT_APP_API_URL;
+
+PRIORITY = {
+  0: "#7BB558",
+  1: "#ED863B",
+  2: "#E55050"
+}
+
+function AddTask(props) {
+  const {navigation} = props;
   const [userData, setUserData] = React.useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleConsumer, setModalVisibleConsumer] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [priority, setPriority] = useState(-1);
+  const [assignees, setAssignees] = useState([])
+  const [checkList, setCheckList] = useState({})
 
   const showDatePicker = () => {
     setDatePickerVisible(true);
@@ -43,6 +57,78 @@ function AddTask({ navigation }) {
     });
   };
 
+  const handleOnSave = (data) => {
+    setCheckList(data);
+  }
+
+  const handleConfirmPriority = (priority) => {
+    setPriority(priority)
+    setModalVisible(!modalVisible)
+  }
+
+  const handleSubmitConsumer = (assignees) => {
+    setAssignees({assignees})
+    setModalVisibleConsumer(!modalVisibleConsumer);
+  }
+
+  const checkResponse = (res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return res.json().then((err) => Promise.reject(err));
+  };
+
+  const handleSubmit = () => {
+    createTask();
+    navigation.navigate("HomePage");
+  }
+
+  const updateTask = (data) => {
+      return fetch(`${API_URL}/api/tasks/${data}/`, {
+        method: 'PATCH',
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Token ${auth_token}`,
+        },
+        body: JSON.stringify({check_list: checkList, assignees: assignees.assignees.assignees}),
+        })
+        .then(checkResponse)
+        };
+
+  const createTask = () => {
+    let formData = new FormData();
+        if (selectedDate) {
+          const year = selectedDate.getFullYear();
+          const month = ("0" + (selectedDate.getMonth() + 1)).slice(-2);
+          const day = ("0" + selectedDate.getDate()).slice(-2);
+          formData.append('deadline', `${year}-${month}-${day}`)
+        }
+        if (userData.name) {
+          formData.append('name', userData.name)
+        }
+        if (userData.description) {
+          formData.append('description', userData.description)
+        }
+        if (priority !== -1) {
+          formData.append('priority', priority)
+        }
+        formData.append('chapter', props.route.params.id)
+        return fetch(`${API_URL}/api/tasks/`, {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Token ${auth_token}`,
+          },
+          body: formData
+      })
+          .then(checkResponse).then((res) => updateTask(res.id))}
+        
+    
+
+  const isFocused = useIsFocused();
+  useEffect(() => {
+  }, [checkList, isFocused, assignees, priority]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -58,12 +144,13 @@ function AddTask({ navigation }) {
 
         <IconButton
           style={styles.icon_header_add}
+          onPress={() => handleSubmit()}
           icon={(props) => <Icon name="arrow-up" {...props} color="#FEFEFE" />}
         />
       </View>
       <TextInput
         style={styles.title}
-        onChange={(e) => onChangeInput(e)}
+        onChange={(e) => onChangeInput(e, "name")}
         placeholder="Название задачи"
         fontSize={24}
         type="text"
@@ -74,7 +161,7 @@ function AddTask({ navigation }) {
       <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
         <TextInput
           style={styles.discription}
-          onChange={(e) => onChangeInput(e)}
+          onChange={(e) => onChangeInput(e, "description")}
           placeholder="Введите описание"
           fontSize={16}
           editable
@@ -89,7 +176,7 @@ function AddTask({ navigation }) {
           id={2}
         />
 
-        <AddCheckList />
+        <AddCheckList checkList={checkList} onSave={handleOnSave}/>
 
         <View style={styles.footerTask}>
           <View style={styles.footerTask_row}>
@@ -150,19 +237,19 @@ function AddTask({ navigation }) {
                   <Text style={styles.modalText}>Выберите цвет метки</Text>
                   <Pressable
                     style={[styles.button, styles.buttonCloseGreen]}
-                    onPress={() => setModalVisible(!modalVisible)}
-                  >
-                    <View style={styles.textStyle}></View>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.button, styles.buttonCloseRed]}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={() => handleConfirmPriority(0)}
                   >
                     <View style={styles.textStyle}></View>
                   </Pressable>
                   <Pressable
                     style={[styles.button, styles.buttonCloseOrange]}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={() => handleConfirmPriority(1)}
+                  >
+                    <View style={styles.textStyle}></View>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonCloseRed]}
+                    onPress={() => handleConfirmPriority(2)}
                   >
                     <View style={styles.textStyle}></View>
                   </Pressable>
@@ -170,7 +257,13 @@ function AddTask({ navigation }) {
               </View>
             </Modal>
             <Pressable
-              style={[styles.button, styles.buttonOpen]}
+              style={{borderRadius: 20,
+                padding: 10,
+                elevation: 2,
+                width: 80,
+                height: 30,
+                backgroundColor: PRIORITY[priority],
+              }}
               onPress={() => setModalVisible(true)}
             >
               <View style={styles.textStyle}></View>
@@ -198,14 +291,14 @@ function AddTask({ navigation }) {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalViewChapter}>
-            <AddConsumer />
+            {assignees ? <AddConsumer task={{assignees, board_id: props.route.params.board}} onSave={handleSubmitConsumer}/>: null}
           </View>
-          <Pressable
+          {/* <Pressable
             style={[styles.buttonCons, styles.buttonCloseCons]}
             onPress={() => setModalVisibleConsumer(!modalVisibleConsumer)}
           >
             <Text style={styles.textStyleCons}>Готово</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
       </Modal>
     </View>

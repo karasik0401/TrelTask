@@ -6,15 +6,17 @@ import {
   import React from 'react';
   import { Stack, IconButton } from "@react-native-material/core";
   import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+  import * as Progress from 'react-native-progress';
+
   
   
-  function CardBoard_List({ route }) {
+  function CardBoard_List(board) {
 
         
       return (
           <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>I remember</Text>
+                <Text style={styles.title}>{board.board.name}</Text>
             </View>
 
             <View style={styles.disc}>
@@ -22,28 +24,27 @@ import {
         name='trello'
         color='#252525'
         size={18} />
-                <Text style={styles.txt}>6</Text>
+                <Text style={styles.txt}>{board.board.not_done}</Text>
                 <Icon style={styles.icon_chb}
         name='checkbox-marked-circle-outline'
         color='#252525'
         size={18} />
-                <Text>45</Text>
+                <Text>{board.board.done}</Text>
             </View>
 
             <View style={styles.row}>
             <View style={styles.row_circl}>
-                <View style={styles.circl}></View>
-                <View style={styles.circl}></View>
-                <View style={styles.circl}></View>
-                <View style={styles.circl}></View>
+            {board.board.participants.map(participant => (
+                <View>
+                    <Image
+                    key={participant.id}
+                    style={styles.circl}
+                    source={participant.photo ? { uri: participant.photo } : require('../../img/Profile.png')}
+                    />
+                </View>))}
             </View>
 
-            <View style={styles.procent}>
-                <View style={styles.circl_min}>
-                    <Text style={styles.procent_txt}>42</Text>
-                </View>
-                
-            </View>
+            <Progress.Circle size={50} color={'#EB5093'} unfilledColor={'#252525'} fontSize={16} borderWidth={0} showsText={true} thickness={12} progress={board.board.percent} />
             </View>
             
 

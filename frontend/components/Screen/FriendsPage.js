@@ -15,36 +15,116 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import { useIsFocused } from '@react-navigation/native';
 import NavBar from "../Widget/NavBar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-const data = [
-  { id: 1, txt: "Петя", isChecked: false },
-  { id: 2, txt: "Вася", isChecked: false },
-  { id: 3, txt: "Саша", isChecked: false },
-  { id: 4, txt: "Влад", isChecked: false },
-  { id: 5, txt: "Петя", isChecked: false },
-  { id: 6, txt: "Вася", isChecked: false },
-  { id: 7, txt: "Саша", isChecked: false },
-  { id: 8, txt: "Влад", isChecked: false },
-];
+import filter from "lodash.filter";
+import { REACT_APP_API_URL } from '@env';
+
+const API_URL = REACT_APP_API_URL;
+
 
 function FriendsPage({ navigation }) {
-  const [products, setProducts] = React.useState(data);
+  const [data, setData] = useState([{
+    id:0,
+    email: null,
+    username: null,
+    photo: null,
+    is_following: false
+  }]);
+  const [fullData, setFullData] = useState([]);
+  const [searchQuery, setsearchQuery] = useState("");
+  const [query, setQuesry] = useState("");
+  const [friends, setFriends] = useState([]);
+  const [isChanged,  setIsChanged] = useState(null)
 
-  const handleChange = (id) => {
-    let temp = products.map((product) => {
-      if (id === product.id) {
-        return { ...product, isChecked: !product.isChecked };
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    fetchUsersData();
+  }, [isFocused]);
+
+
+  const fetchUsersData = async() => {
+    try {
+      const response = await fetch(`${API_URL}/api/users/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Token ${auth_token}`,
+        },
+      });
+      const json = await response.json();
+      console.log(json)
+      setData(json);
+      setFullData(json);
+    }
+    catch (error) {
+      console.log(error);
       }
-      return product;
-    });
-    setProducts(temp);
   };
 
-  let selected = products.filter((product) => product.isChecked);
+  const CreateFollow = async(following) => {
+    try {
+      const response = await fetch(`${API_URL}/api/follow/`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Token ${auth_token}`,
+        },
+        body: JSON.stringify({ following }),
+    });
+      const json = await response.json();
+      fetchUsersData();
+    }
+    catch (error) {
+      console.log(error);
+      }
+  };
+
+  const DeleteFollow = async(following) => {
+    try {
+      const response = await fetch(`${API_URL}/api/follow/${following}/delete/`, {
+        method: 'DELETE',
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Token ${auth_token}`,
+        },
+    });
+      const json = await response;
+      fetchUsersData();
+    }
+    catch (error) {
+      console.log(error);
+      }
+  };
+
+  const handleSearch = (query) => {
+    setsearchQuery(query);
+    const filteredData = filter(fullData, (user) => {
+      return contains(user, query);
+    });
+    setData(filteredData);
+  };
+  const contains = ({username, email}, query) => {
+    console.log(username)
+    if (username.includes(query) || email.includes(query)) {
+      return true;
+    }
+    return false;
+  }
+
+
+  const handleChange = (id, is_following) => {
+    if (is_following){
+      DeleteFollow(id)
+    } else {
+      CreateFollow(id)
+    }
+  };
+
 
   const renderFlatList = (renderData) => {
     return (
@@ -54,10 +134,10 @@ function FriendsPage({ navigation }) {
         renderItem={({ item }) => (
           <View style={{ margin: 0 }}>
             <View style={styles.card}>
-              <Text style={styles.name}>{item.txt}</Text>
-              <Pressable onPress={() => handleChange(item.id)}>
+              <Text style={styles.name}>{item.username}</Text>
+              <Pressable onPress={() => handleChange(item.id, item.is_following)}>
                 <MaterialCommunityIcons
-                  name={item.isChecked ? "close-circle" : "plus-circle-outline"}
+                  name={item.is_following ? "close-circle" : "plus-circle-outline"}
                   size={30}
                   color="#EB5093"
                 />
@@ -78,7 +158,7 @@ function FriendsPage({ navigation }) {
             <Icon name="account-group" {...props} color="#FEFEFE" />
           )}
         />
-        <Text style={styles.title}>Мои друзья</Text>
+        <Text style={styles.title}>Пользователи</Text>
       </View>
 
       <SafeAreaView>
@@ -99,24 +179,18 @@ function FriendsPage({ navigation }) {
           style={styles.search}
           autoCapitalize="none"
           autoCorrect={false}
+          value={searchQuery} onChangeText={(query) => handleSearch(query)}
         />
       </SafeAreaView>
 
-      <View style={styles.big_row}>
-        <View style={styles.min_row}>
-          <View style={styles.img}></View>
-          <View style={styles.img}></View>
-          <View style={styles.img}></View>
-        </View>
-        <Text style={styles.min_title}>Заявки в друзья</Text>
-      </View>
+      
       <View style={styles.line}></View>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.bigscroll}>
         <View style={styles.column}>
 
           <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-            {renderFlatList(products)}
+            {renderFlatList(data)}
           </ScrollView>
         </View>
       </ScrollView>

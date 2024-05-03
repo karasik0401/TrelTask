@@ -4,15 +4,44 @@ import {
     View, ScrollView, Image, FlatList, Alert, TextInput, Pressable, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity, SafeAreaView
   } from 'react-native';
 import { Feather, Entypo } from "@expo/vector-icons";
-import React from 'react';
+import React, {useState, useEffect} from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import NavBar from '../Widget/NavBar';
 import CardTask_home from '../Widget/CardTask_home';
+import { useIsFocused } from '@react-navigation/native';
+import { REACT_APP_API_URL } from '@env';
+
+const API_URL = REACT_APP_API_URL;
   
   
   function My_Tasks({ navigation }) {
+    const [taskList, setTaskList] = useState([]);
 
+    const fetchTaskData = async() => {
+      try {
+        const response = await fetch(`${API_URL}/api/tasks/users_tasks/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Token ${auth_token}`,
+          },
+        });
+        const json = await response.json();
+        setTaskList(json);
+      }
+      catch (error) {
+        console.log(error);
+        }
+    };
+
+    const isFocused = useIsFocused();
+      useEffect(() => {
+        const token = auth_token;
+        if (token) {
+          fetchTaskData();
+        }
+    }, [isFocused]);
     
     
       return (
@@ -44,7 +73,13 @@ import CardTask_home from '../Widget/CardTask_home';
 
 
             <View style={styles.column}>
-                <CardTask_home/>
+                <FlatList  style={styles.list}
+                  data={taskList}
+                  кey={(item) => item}
+                  renderItem={({item}) => (
+                  <TouchableOpacity onPress={() => navigation.navigate("TaskPage")}>
+                    <CardTask_home task={item}/>
+                  </TouchableOpacity>)}/>
             </View>
 
             </ScrollView>

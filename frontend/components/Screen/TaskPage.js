@@ -16,24 +16,49 @@ import {
   ToastAndroid
 } from "react-native";
 import { Button, CheckBox } from "@rneui/themed";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import CheckList from "../Widget/CheckList";
 import AddConsumer from "../Widget/AddConsumer";
 import { color } from "@rneui/themed/dist/config";
+import { useIsFocused } from '@react-navigation/native';
+import { REACT_APP_API_URL } from '@env';
 
-function TaskPage({ navigation }) {
+const API_URL = REACT_APP_API_URL;
+
+PRIORITY = {
+  0: "#7BB558",
+  1: "#ED863B",
+  2: "#E55050"
+}
+
+function TaskPage(props) {
+  const {navigation} = props;
   const [number, onChangeNumber] = React.useState("");
-
+  const [task, setTask] = useState({assignees: []});
+  const [checkList, setCheckList] = useState({some: true})
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleConsumer, setModalVisibleConsumer] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [refresh, setRefreshing] = useState(false)
 
   const showDatePicker = () => {
     setDatePickerVisible(true);
+  };
+
+  const setRefresh = () => {
+    setRefreshing(!refresh)
+  }
+
+  const checkResponse = (res) => {
+    if (res.ok) {
+      setRefresh();
+      return res.json();
+    }
+    return res.json().then((err) => Promise.reject(err));
   };
 
   const hideDatePicker = () => {
@@ -41,13 +66,85 @@ function TaskPage({ navigation }) {
   };
 
   const handleConfirm = (date) => {
+    updateTask({date: date});
     setSelectedDate(date);
     hideDatePicker();
   };
 
-  function onPressFunction() {
-    ToastAndroid.show("onPressFunction()",ToastAndroid.SHORT)
+  const handleSubmitConsumer = (assignees) => {
+    updateTask({assignees})
+    setModalVisibleConsumer(!modalVisibleConsumer);
   }
+
+  const handleConfirmPriority = (priority) => {
+    updateTask({priority})
+    setModalVisible(!modalVisible)
+  }
+
+  const fetchTaskData = async() => {
+    try {
+      const response = await fetch(`${API_URL}/api/tasks/${props.route.params}/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Token ${auth_token}`,
+        },
+      });
+      const json = await response.json();
+      setTask(json);
+      setCheckList(json.check_list)
+      setSelectedDate(new Date(json.deadline));
+    }
+    catch (error) {
+      console.log(error);
+      }
+  };
+
+
+  const updateTask = (data) => {
+    let formData = new FormData();
+        if (data.date) {
+          const year = data.date.getFullYear();
+          const month = ("0" + (data.date.getMonth() + 1)).slice(-2);
+          const day = ("0" + data.date.getDate()).slice(-2);
+          formData.append('deadline', `${year}-${month}-${day}`)
+        }
+        if (data.priority !== undefined) {
+          formData.append('priority', data.priority)
+        }
+        if (data.done !== undefined) {
+          formData.append('done', !data.done)
+        }
+        if (data.assignees !== undefined) {
+          return fetch(`${API_URL}/api/tasks/${props.route.params}/`, {
+            method: 'PATCH',
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Token ${auth_token}`,
+            },
+            body: JSON.stringify(data.assignees),
+        })
+            .then(checkResponse)
+        }
+        else{return fetch(`${API_URL}/api/tasks/${props.route.params}/`, {
+          method: 'PATCH',
+          headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Token ${auth_token}`,
+          },
+          body: formData
+      })
+          .then(checkResponse)}
+        
+        };
+
+  const isFocused = useIsFocused();
+      useEffect(() => {
+        const token = auth_token;
+        if (token) {
+          fetchTaskData();
+        }
+    }, [refresh, isFocused]);
 
 
   return (
@@ -61,18 +158,16 @@ function TaskPage({ navigation }) {
               <Icon name="arrow-left-circle" {...props} color="#FEFEFE" />
             )}
           />
-          <Text style={styles.title}>Название задачи</Text>
+          <Text style={styles.title}>{task.name}</Text>
         </View>
 
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
         <Text style={styles.discription}>
-          Сделать прототип приложения и создать дизайн. Подобрать цвета,
-          элементы. Подготовить макет к верстке.
+          {task.description}
         </Text>
-
-        <CheckList />
-
+        {checkList && (<CheckList checkList={checkList} taskId={task.id} refresh={setRefresh}/>)}
+        
         <View style={styles.footerTask}>
           <View style={styles.footerTask_row}>
             <TouchableOpacity
@@ -132,19 +227,19 @@ function TaskPage({ navigation }) {
                   <Text style={styles.modalText}>Выберите цвет метки</Text>
                   <Pressable
                     style={[styles.button, styles.buttonCloseGreen]}
-                    onPress={() => setModalVisible(!modalVisible)}
-                  >
-                    <View style={styles.textStyle}></View>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.button, styles.buttonCloseRed]}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={() => handleConfirmPriority(0)}
                   >
                     <View style={styles.textStyle}></View>
                   </Pressable>
                   <Pressable
                     style={[styles.button, styles.buttonCloseOrange]}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={() => handleConfirmPriority(1)}
+                  >
+                    <View style={styles.textStyle}></View>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonCloseRed]}
+                    onPress={() => handleConfirmPriority(2)}
                   >
                     <View style={styles.textStyle}></View>
                   </Pressable>
@@ -152,7 +247,13 @@ function TaskPage({ navigation }) {
               </View>
             </Modal>
             <Pressable
-              style={[styles.button, styles.buttonOpen]}
+              style={{borderRadius: 20,
+                padding: 10,
+                elevation: 2,
+                width: 80,
+                height: 30,
+                backgroundColor: PRIORITY[task.priority],
+              }}
               onPress={() => setModalVisible(true)}
             >
               <View style={styles.textStyle}></View>
@@ -175,12 +276,12 @@ function TaskPage({ navigation }) {
        
       </ScrollView>
       
- <Pressable onPress={onPressFunction} style={styles.pressableStyle}>
-          {({ pressed }) => (
-          <Text style={ pressed ? styles.pressedTextStyle : styles.unPressedTextStyle}>
-            {pressed ? 'Отменить выполнение' : 'Отметить как выполненное'}
+        <Pressable onPress={() => updateTask({done: task.done})} style={styles.pressableStyle}>
+          {
+          <Text style={ task.done ? styles.pressedTextStyle : styles.unPressedTextStyle}>
+            {task.done ? 'Отменить выполнение' : 'Отметить как выполненное'}
           </Text>
-        )}
+          }
         </Pressable>
 
 
@@ -189,17 +290,20 @@ function TaskPage({ navigation }) {
         transparent={true}
         visible={modalVisibleConsumer}
       >
+              {task.assignees.map(assign => (
+                    <Image
+                    key={assign.id}
+                    style={styles.circl}
+                    source={assign.photo ? { uri: assign.photo } : require('../../img/Profile.png')}
+                    />
+                ))}
         <View style={styles.centeredView}>
           <View style={styles.modalViewChapter}>
-            <AddConsumer />
+            {task ? (<AddConsumer task={task} onSave={handleSubmitConsumer}/>): null}
           </View>
-          <Pressable
-            style={[styles.buttonCons, styles.buttonCloseCons]}
-            onPress={() => setModalVisibleConsumer(!modalVisibleConsumer)}
-          >
-            <Text style={styles.textStyleCons}>Готово</Text>
-          </Pressable>
+          
         </View>
+        
       </Modal>
     </View>
   );
@@ -219,6 +323,27 @@ const styles = StyleSheet.create({
     color: "#FEFEFE",
     marginTop: 4,
   },
+  row:{
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+},
+row_circl:{
+  display: 'flex',
+  flexDirection: 'row',
+},
+circl:{
+  height: 30,
+  width: 30,
+  borderRadius: 30,
+  borderColor: "#CDDCA1",
+  borderWidth: 1,
+  backgroundColor: '#000000',
+  marginRight: -15,
+  marginTop: 20
+
+},
 
   modalView: {
     marginTop: 420,
@@ -320,6 +445,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     width: 80,
     height: 30,
+    backgroundColor: "#7BB558",
   },
   buttonOpen: {
     backgroundColor: "#7BB558",

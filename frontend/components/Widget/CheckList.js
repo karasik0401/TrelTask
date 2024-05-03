@@ -6,33 +6,72 @@ import {
   Modal,
   FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AddCheckPoint from "./AddCheckPoint";
+import { REACT_APP_API_URL } from '@env';
 
-const data = [
-  { id: 1, txt: "Найти аналоги", isChecked: false },
-  { id: 2, txt: "Создать прототип", isChecked: false },
-  { id: 3, txt: "Накинуть дизайн", isChecked: false },
-];
+const API_URL = REACT_APP_API_URL;
 
-function CheckList({ route }) {
-  const [products, setProducts] = React.useState(data);
+
+function CheckList({ checkList, taskId, refresh}) {
+  const [renderdata, setRenderData] = React.useState([{key:"1", done: false}]);
   const [modalVisibleCheckList, setModalVisibleCheckList] = useState(false);
 
-  const handleChange = (id) => {
-    let temp = products.map((product) => {
-      if (id === product.id) {
-        return { ...product, isChecked: !product.isChecked };
-      }
-      return product;
-    });
-    setProducts(temp);
+  const renderData = () => {
+    setRenderData(Object.keys(checkList).map(key => ({
+      key:key,
+      done:checkList[key]
+    })))
+  }
+
+  const checkResponse = (res) => {
+    if (res.ok) {
+      refresh()
+      return res.json();
+    }
+    return res.json().then((err) => Promise.reject(err));
   };
 
-  let selected = products.filter((product) => product.isChecked);
+  const updateTaskCheckList = (data) => {
+    const check_list = data.reduce((acc, curr) => {
+      acc[curr.key] = curr.done;
+      return acc;
+    }, {});
+    console.log(check_list)
+    return fetch(`${API_URL}/api/tasks/${taskId}/`, {
+      method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Token ${auth_token}`,
+      },
+      body: JSON.stringify({ check_list }),
+  })
+      .then(checkResponse)
+      
+  };
+    
+
+  const handleChange = (key) => {
+    const itemIndex = renderdata.findIndex(item => item.key === key);
+    const newData = [...renderdata];
+    if (itemIndex === -1){
+      setModalVisibleCheckList(!modalVisibleCheckList)
+      newData.push({key, done: false})
+      console.log("newData")
+    } else{
+      newData[itemIndex].done = !newData[itemIndex].done;
+    }
+    setRenderData(newData);
+    updateTaskCheckList(newData);
+  };
+
+  useEffect(() => {
+      renderData();
+    
+  }, [checkList]);
 
   const renderFlatList = (renderData) => {
     return (
@@ -42,11 +81,11 @@ function CheckList({ route }) {
         renderItem={({ item }) => (
           <View style={{ margin: 0 }}>
             <View style={styles.row_check}>
-              <Text style={styles.check_title}>{item.txt}</Text>
-              <Pressable onPress={() => handleChange(item.id)}>
+              <Text style={styles.check_title}>{item.key}</Text>
+              <Pressable onPress={() => handleChange(item.key)}>
                 <MaterialCommunityIcons
                   name={
-                    item.isChecked
+                    item.done
                       ? "checkbox-marked-circle-outline"
                       : "checkbox-blank-circle-outline"
                   }
@@ -80,7 +119,7 @@ function CheckList({ route }) {
         
       </View>
 
-      {renderFlatList(products)}
+      {renderFlatList(renderdata)}
 <IconButton
           style={styles.icon_chb_add}
           onPress={() => setModalVisibleCheckList(true)}
@@ -100,7 +139,7 @@ function CheckList({ route }) {
       >
         <View style={styles.centeredView}>
           <View style={styles.mod}>
-            <AddCheckPoint />
+            <AddCheckPoint onSave={handleChange}/>
           </View>
           <Pressable
             style={[styles.buttonAdd, styles.buttonCloseAdd]}

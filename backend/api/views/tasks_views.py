@@ -12,7 +12,8 @@ from api.serializers.tasks_serializers import (
     BoardListSerializer,
     BoardCreateUpdateSerializer, BoardShowSerializer, ChapterListSerializer,
     ChapterCreateUpdateSerializer, ChapterShowSerializer, TaskListSerializer,
-    TaskCreateUpdateSerializer, TaskShowSerializer, BoardParticipantSerializer
+    TaskCreateUpdateSerializer, TaskShowSerializer, BoardParticipantSerializer,
+    BoardDetailForUpdateSerializer, TaskDetailForUpdateSerializer
 )
 from tasks.models import Board, Chapter, Task
 
@@ -26,6 +27,8 @@ class BoardViewSet(viewsets.ModelViewSet):
             return BoardListSerializer
         if self.action in ("create", "partial_update", "destroy"):
             return BoardCreateUpdateSerializer
+        if self.action == "for_update":
+            return BoardDetailForUpdateSerializer
         if self.action == "retrieve":
             return BoardShowSerializer
         if self.action == "participants":
@@ -60,6 +63,11 @@ class BoardViewSet(viewsets.ModelViewSet):
     @action(["get"], detail=True, url_path="participants")
     def participants(self, request, *args, **kwargs):
         board = Board.objects.filter(id=kwargs.get('pk')).first()
+        return Response(self.get_serializer(board).data)
+
+    @action(["get"], detail=True)
+    def for_update(self, request, *args, **kwargs):
+        board = Board.objects.filter(id=kwargs.get("pk")).first()
         return Response(self.get_serializer(board).data)
 
 
@@ -99,6 +107,8 @@ class TaskViewSet(viewsets.ModelViewSet):
             return TaskListSerializer
         if self.action in ("create", "partial_update", "destroy"):
             return TaskCreateUpdateSerializer
+        if self.action == "for_update":
+            return TaskDetailForUpdateSerializer
         if self.action == "retrieve":
             return TaskShowSerializer
 
@@ -147,6 +157,11 @@ class TaskViewSet(viewsets.ModelViewSet):
     def users_tasks(self, request, *args, **kwargs):
         tasks = Task.objects.filter(assignees=self.request.user)
         return Response(self.get_serializer(tasks, many=True).data)
+
+    @action(["get"], detail=True)
+    def for_update(self, request, *args, **kwargs):
+        board = Task.objects.filter(id=kwargs.get("pk")).first()
+        return Response(self.get_serializer(board).data)
 
     # @action(
     #     ["get"],

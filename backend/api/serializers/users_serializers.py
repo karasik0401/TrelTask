@@ -3,8 +3,10 @@ from djoser.serializers import (
     UserSerializer
 )
 from rest_framework import serializers
+from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 
-from users.models import CustomUser, FriendshipRequest
+from users.models import CustomUser, Follow
 
 
 class CustomUserCreateSerializer(UserCreatePasswordRetypeSerializer):
@@ -25,7 +27,7 @@ class CustomUserCreateSerializer(UserCreatePasswordRetypeSerializer):
 
 
 class CustomUserSerializer(UserSerializer):
-    is_friend = serializers.SerializerMethodField()
+    is_following = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = CustomUser
@@ -34,67 +36,37 @@ class CustomUserSerializer(UserSerializer):
             'email',
             'username',
             'photo',
-            'is_friend'
+            'is_following'
         )
 
-    def get_is_friend(self, obj):
-        request_user = self.context['request'].user
-
-        from_friend_request = FriendshipRequest.objects.filter(
-            from_user=request_user,
-            to_user=obj
-        )
-        if from_friend_request.exists():
-            friend_request = from_friend_request.first()
-            if friend_request.status == 'rejected':
-                return 'Заявка отклонена'
-            return 'Заявка отправлена'
-        to_friend_request = FriendshipRequest.objects.filter(
-            from_user=obj,
-            to_user=request_user
-        )
-        if to_friend_request.exists():
-            friend_request = to_friend_request.first()
-            if friend_request.status == 'reject':
-                return 'Вы отклонили заявку'
-            return 'Вам отправлена заявка'
-        if obj in request_user.friends.all():
-            return 'Вы друзья'
-        return 'Вы не друзья'
+    def get_is_following(self, obj):
+        try:
+            return Follow.objects.filter(
+                user=self.context['request'].user,
+                following=obj.id
+            ).exists()
+        except TypeError:
+            return False
 
 
-class FriendshipRequestSerializer(serializers.ModelSerializer):
-    from_user = serializers.CharField(
-        source='from_user.username',
-        read_only=True
-    )
-    to_user = serializers.CharField(
-        source='to_user.username',
-        read_only=True
-    )
+class FollowPostDeleteSerializer(serializers.ModelSerializer):
+
+    def validate_following(self, value):
+        if value == self.context['request'].user:
+            raise serializers.ValidationError(
+                'Вы не можете подписаться на самого себя'
+            )
+        return value
 
     class Meta:
-        model = FriendshipRequest
-        fields = '__all__'
+        fields = ['following']
+        model = Follow
 
-    def validate(self, data):
-        user = CustomUser.objects.get(id=self.context['request'].user.id)
-        friend = CustomUser.objects.get(id=self.context['friend_id'])
 
-        if user == friend:
-            raise serializers.ValidationError(
-                'Нельзя добавить в друзья самого себя!'
-            )
+class FollowSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(read_only=True)
+    following = CustomUserSerializer(read_only=True)
 
-        if FriendshipRequest.objects.filter(
-            from_user=user,
-            to_user=friend
-        ).exists():
-            raise serializers.ValidationError('Заявка уже отправлена!')
-
-        if friend in user.friends.all():
-            raise serializers.ValidationError(
-                'Пользователь уже есть у Вас в друзьях!'
-            )
-
-        return data
+    class Meta:
+        fields = ['user', 'following']
+        model = Follow

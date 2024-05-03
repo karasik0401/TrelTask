@@ -6,17 +6,22 @@ import {
     ScrollView,
     FlatList,TextInput
   } from "react-native";
-  import React from "react";
+  import React, { useState, useEffect }  from "react";
   import { MaterialCommunityIcons } from "@expo/vector-icons";
+  import { useIsFocused } from '@react-navigation/native';
+  import { REACT_APP_API_URL } from '@env';
+
+  const API_URL = REACT_APP_API_URL;
   
 
   
-  function AddChapter({ route }) {
-
+  function AddChapter({ onSave }) {
     const [userData, setUserData] = React.useState({});
-
-
     
+      const handleSubmit = () => {
+        console.log(userData)
+        onSave(userData.name)
+      };
     
 
     const onChangeInput = (e, name) => {
@@ -36,13 +41,19 @@ import {
             <View style={{ margin: 0 }}>
               <TextInput
                 style={styles.Login}
-                onChange={e => onChangeInput(e)}
+                onChange={e => onChangeInput(e, "name")}
                 placeholder="Новый список "
                 type="text"
                 placeholderTextColor="#828282"
                 id = {1}
                 />
             </View>
+            <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => handleSubmit()}
+          >
+            <Text style={styles.textStyle}>Добавить</Text>
+          </Pressable>
         </View>
       );
     };

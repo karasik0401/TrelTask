@@ -6,36 +6,117 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect }  from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useIsFocused } from '@react-navigation/native';
 
-const data = [
-  { id: 1, txt: "Петя", isChecked: false },
-  { id: 2, txt: "Вася", isChecked: false },
-  { id: 3, txt: "Саша", isChecked: false },
-  { id: 4, txt: "Влад", isChecked: false },
-  { id: 5, txt: "Петя", isChecked: false },
-  { id: 6, txt: "Вася", isChecked: false },
-  { id: 7, txt: "Саша", isChecked: false },
-  { id: 8, txt: "Влад", isChecked: false },
-];
+import { REACT_APP_API_URL } from '@env';
 
-function AddFriends({ route }) {
-  const [products, setProducts] = React.useState(data);
+const API_URL = REACT_APP_API_URL;
+
+
+function AddFriends({ boardId }) {
+  const [board, setBoard] = useState({ participants: [] });
+  const [users, setUsers] = useState([])
 
   const handleChange = (id) => {
-    let temp = products.map((product) => {
-      if (id === product.id) {
-        return { ...product, isChecked: !product.isChecked };
-      }
-      return product;
-    });
-    setProducts(temp);
+    let tempParticipants = [...board.participants];
+
+    const index = tempParticipants.indexOf(id);
+    if (index !== -1) {
+      tempParticipants.splice(index, 1);
+    } else {
+      tempParticipants.push(id);
+    }
+    setBoard({participants: tempParticipants});
   };
 
-  let selected = products.filter((product) => product.isChecked);
+  const checkResponse = (res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return res.json().then((err) => Promise.reject(err));
+  };
 
-  const renderFlatList = (renderData) => {
+  const ChengeBoard = (participants) => {
+    return fetch(`${API_URL}/api/boards/${boardId}/`, {
+        method: 'PATCH',
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Token ${auth_token}`,
+        },
+        body: JSON.stringify({ participants }),
+    })
+        .then(checkResponse)
+    };
+
+  const fetchBoardData = async() => {
+    try {
+      const response = await fetch(`${API_URL}/api/boards/${boardId}/for_update/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Token ${auth_token}`,
+        },
+      });
+      const json = await response.json();
+      setBoard({ participants: json.participants });
+    }
+    catch (error) {
+      console.log(error);
+      }
+  };
+
+  const handleSubmit = () => {
+    ChengeBoard(board.participants)
+    .then((res) => {
+      if (res) {
+      }
+    })
+    .catch((err) => {
+      Alert.alert(err[0][0]);
+      }
+    );
+  };
+
+  const fetchUsersData = async() => {
+    try {
+      const response = await fetch(`${API_URL}/api/users/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Token ${auth_token}`,
+        },
+      });
+      const json = await response.json();
+      const newList = []
+      json.forEach(user => {
+        if (user.is_following){
+          newList.push(user)
+        }
+        
+      });
+      setUsers(newList);
+    }
+    catch (error) {
+      console.log(error);
+      }
+  };
+
+  
+
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    const token = auth_token;
+    if (token) {
+      fetchUsersData();
+      fetchBoardData();
+    }
+    
+  }, [isFocused]);
+
+  const renderFlatList = (renderData, board) => {
+    console.log(board, renderData)
     return (
       <FlatList
         style={styles.container}
@@ -43,10 +124,10 @@ function AddFriends({ route }) {
         renderItem={({ item }) => (
           <View style={{ margin: 0 }}>
             <View style={styles.card}>
-              <Text style={styles.item}>{item.txt}</Text>
+              <Text style={styles.item}>{item.username}</Text>
               <Pressable onPress={() => handleChange(item.id)}>
                 <MaterialCommunityIcons
-                  name={item.isChecked ? "close-circle" : "plus-circle-outline"}
+                  name={board.participants.includes(item.id)? "close-circle" : "plus-circle-outline"}
                   size={28}
                   color="#EB5093"
                 />
@@ -63,8 +144,14 @@ function AddFriends({ route }) {
       <Text style={styles.title}>Добавить участников доски</Text>
       <View style={styles.line}></View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-        {renderFlatList(products)}
+        {renderFlatList(users, board)}
       </ScrollView>
+      <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => handleSubmit()}
+              >
+                <Text style={styles.textStyle}>Сохранить</Text>
+              </Pressable>
       <View></View>
     </View>
   );

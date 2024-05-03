@@ -24,12 +24,11 @@ function Profile({ navigation }) {
         allowsEditing: true,
         quality: 1,
       });
-  
-      console.log(result);
-  
+    
       if (!result.canceled) {
-        setImage(result.assets[0].uri);
-      }
+        setImage(result);
+        handleSubmit(result)
+        }
     };
     
     const checkResponse = (res) => {
@@ -37,6 +36,47 @@ function Profile({ navigation }) {
         return (res.json());
       }
       return res.json().then((err) => Promise.reject(err));
+    };
+
+    const ChengeUser = (data) => {
+      console.log(data, "меняем")
+      return fetch(`${API_URL}/api/users/${userState.id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Token ${auth_token}`,
+        },
+        body: data
+      })
+        .then(checkUpdateResponse)
+    };
+
+    const handleSubmit = (result) => {
+      let formData = new FormData();
+      if (result){
+        console.assert(image)
+          formData.append('photo', {
+          uri: result.assets[0].uri.replace('file://', ''),
+          type: result.assets[0].type,
+          name: result.assets[0].fileName
+      })
+      }
+      ChengeUser(formData)
+      .then((res) => {
+        if (res) {
+        }
+      })
+      .catch((err) => {
+          if(err.username){
+              Alert.alert(err.username[0]);
+          }
+          if(err.email){
+              Alert.alert(err.email[0]);
+          }
+        console.log(err)
+        
+        }
+      );
     };
 
     const getUser = () => {
@@ -53,9 +93,9 @@ function Profile({ navigation }) {
     React.useEffect(() => {
         const token = auth_token;
         if (token) {
-        getUser();
+          getUser();
         }
-    }, [isFocused]);
+    }, [image, isFocused]);
 
     
 
@@ -69,7 +109,7 @@ function Profile({ navigation }) {
         <Image style={styles.photo}/>
 
         <View style={styles.rec_one}>
-        {image && <Image source={userState.photo ? {uri: userState.photo} : require('../../img/Profile.png')} style={styles.img} />}
+        <Image source={image ? { uri: image.assets[0].uri } : (userState.photo? { uri: userState.photo }: require('../../img/Profile.png'))} style={styles.img} />
           <Text style={styles.login}>{userState.username}</Text>
 
           <Text style={styles.email}>{userState.id}</Text>

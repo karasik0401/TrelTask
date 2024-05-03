@@ -6,18 +6,87 @@ import {
   ScrollView,
   Pressable,
   TouchableOpacity,
+  FlatList,
+  Image
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import BoardList from "../Widget/BoardList";
 import AddFriends from "../Widget/AddFriends";
 import AddChapter from "../Widget/AddChapter";
+import { useIsFocused } from '@react-navigation/native';
+import { REACT_APP_API_URL } from '@env';
 
-function BoardPage({ navigation }) {
+const API_URL = REACT_APP_API_URL;
 
+function BoardPage(props) {
+  const {navigation} = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleChapter, setModalVisibleChapter] = useState(false);
+  const [boards, setBoards] = useState({});
+  const [currentChapter, setCurrentChapter] = useState(0);
+  const [refresh, setRefresh] = useState(false)
+
+  const handlePress = () => {
+    setModalVisible(!modalVisible)
+    setRefresh(!refresh)
+  }
+
+  const handlePressChapter = (name) => {
+    setModalVisibleChapter(!modalVisibleChapter)
+    postChapter(name)
+    setRefresh(!refresh)
+  }
+
+  const checkResponse = (res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return res.json().then((err) => Promise.reject(err));
+  };
+
+  const postChapter = (name) => {
+    board = props.route.params
+    console.log(name, board)
+    return fetch(`${API_URL}/api/chapters/`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Token ${auth_token}`,
+        },
+        body: JSON.stringify({ name, board }),
+    })
+        .then(checkResponse)
+    };
+
+  const fetchBoardData = async() => {
+    try {
+      const response = await fetch(`${API_URL}/api/boards/${props.route.params}/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Token ${auth_token}`,
+        },
+      });
+      const json = await response.json();
+      setBoards(json);
+      if (currentChapter === 0){
+        setCurrentChapter(json.chapters[0].id)
+      }
+    }
+    catch (error) {
+      console.log(error);
+      }
+  };
+
+  const isFocused = useIsFocused();
+      useEffect(() => {
+        const token = auth_token;
+        if (token) {
+          fetchBoardData();
+        }
+    }, [refresh, isFocused]);
 
   return (
     <View style={styles.container}>
@@ -30,7 +99,7 @@ function BoardPage({ navigation }) {
               <Icon name="arrow-left-circle" {...props} color="#FEFEFE" />
             )}
           />
-          <Text style={styles.title}>I remember</Text>
+          <Text style={styles.title}>{boards.name}</Text>
         </View>
 
         <IconButton
@@ -53,14 +122,16 @@ function BoardPage({ navigation }) {
               onPress={() => setModalVisible(true)}
               icon={(props) => <Icon name="plus" {...props} color="#1C1C1C" />}
             />
-            <View style={styles.person}>
-              <View style={styles.img}></View>
-              <Text style={styles.name}>Анастасия</Text>
-            </View>
-            <View style={styles.person}>
-              <View style={styles.img}></View>
-              <Text style={styles.name}>Максим</Text>
-            </View>
+             <FlatList style={styles.list}
+                  data={boards.participants}
+                  кey={(item) => item}
+                  renderItem={({item}) => (
+                  <View style={styles.person}>
+                    <Text style={styles.name}>{item.username}</Text>
+                  </View>
+                )
+                }
+                />
           </View>
         </ScrollView>
 
@@ -75,29 +146,34 @@ function BoardPage({ navigation }) {
               onPress={() => setModalVisibleChapter(true)}
               icon={(props) => <Icon name="plus" {...props} color="#FEFEFE" />}
             />
-            <View style={styles.item_on}>
-              <Text style={styles.title_list}>Документация</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.item}
-              onPress={() => navigation.navigate("BoardList")}
-            >
-              <Text style={styles.title_list}>Дизайн</Text>
-            </TouchableOpacity>
+            <FlatList
+                  data={boards.chapters}
+                  кey={(item) => item}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                    style={currentChapter == item.id? styles.item_on: styles.item}
+                    onPress={() => setCurrentChapter(item.id)}
+                  >
+                    <Text style={styles.title_list}>{item.name}</Text>
+                  </TouchableOpacity>
+                )
+                }
+                />
           </View>
         </ScrollView>
-
-        <BoardList navigation={navigation} />
+        {(boards.chapters && currentChapter != 0) && (
+          <BoardList navigation={navigation} chapters={boards.chapters.find(chapter => chapter.id === currentChapter)}/>
+        )}
       </ScrollView>
 
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <AddFriends />
+            <AddFriends boardId={props.route.params}/>
           </View>
           <Pressable
             style={[styles.button, styles.buttonClose]}
-            onPress={() => setModalVisible(!modalVisible)}
+            onPress={() => handlePress()}
           >
             <Text style={styles.textStyle}>Готово</Text>
           </Pressable>
@@ -111,14 +187,9 @@ function BoardPage({ navigation }) {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalViewChapter}>
-            <AddChapter />
+            <AddChapter onSave={handlePressChapter}/>
           </View>
-          <Pressable
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => setModalVisibleChapter(!modalVisibleChapter)}
-          >
-            <Text style={styles.textStyle}>Добавить</Text>
-          </Pressable>
+          
         </View>
       </Modal>
     </View>

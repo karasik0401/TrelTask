@@ -7,35 +7,54 @@ import {
     ScrollView,
     FlatList,
   } from "react-native";
-  import React, { useState } from "react";
+  import React, { useState, useEffect } from "react";
   import { Stack, IconButton } from "@react-native-material/core";
   import Icon from "@expo/vector-icons/MaterialCommunityIcons";
   import { MaterialCommunityIcons } from "@expo/vector-icons";
   import AddCheckPoint from "./AddCheckPoint";
   
-  const data = [
-    { id: 1, txt: "Найти аналоги", isChecked: false },
-    { id: 2, txt: "Создать прототип", isChecked: false },
-    { id: 3, txt: "Накинуть дизайн", isChecked: false },
-  ];
   
-  function AddCheckList({ route }) {
-    const [products, setProducts] = React.useState(data);
+  function AddCheckList({checkList, onSave}) {
+    const [renderdata, setRenderData] = React.useState([{key:"1", done: false}]);
     const [modalVisibleCheckList, setModalVisibleCheckList] = useState(false);
 
-  
-    const handleChange = (id) => {
-      let temp = products.map((product) => {
-        if (id === product.id) {
-          return { ...product, isChecked: !product.isChecked };
-        }
-        return product;
-      });
-      setProducts(temp);
+    const renderData = () => {
+      setRenderData(Object.keys(checkList).map(key => ({
+        key:key,
+        done:checkList[key]
+      })))
+    }
+
+    const handleSubmit = (data) => {
+      const check_list = data.reduce((acc, curr) => {
+        acc[curr.key] = curr.done;
+        return acc;
+      }, {});
+      onSave(check_list)
+    }
+
+    useEffect(() => {
+      renderData();
+    
+    }, [checkList]);
+
+    const handleChange = (key) => {
+      const itemIndex = renderdata.findIndex(item => item.key === key);
+      const newData = [...renderdata];
+      if (itemIndex === -1){
+        setModalVisibleCheckList(!modalVisibleCheckList)
+        newData.push({key, done: false})
+      } else{
+        newData[itemIndex].done = !newData[itemIndex].done;
+      }
+      setRenderData(newData);
+      const check_list = newData.reduce((acc, curr) => {
+        acc[curr.key] = curr.done;
+        return acc;
+      }, {});
+      onSave(check_list)
     };
-  
-    let selected = products.filter((product) => product.isChecked);
-  
+    
     const renderFlatList = (renderData) => {
       return (
         <FlatList
@@ -44,11 +63,11 @@ import {
           renderItem={({ item }) => (
             <View style={{ margin: 0 }}>
               <View style={styles.row_check}>
-                <Text style={styles.check_title}>{item.txt}</Text>
-                <Pressable onPress={() => handleChange(item.id)}>
+                <Text style={styles.check_title}>{item.key}</Text>
+                <Pressable onPress={() => handleChange(item.key)}>
                   <MaterialCommunityIcons
                     name={
-                      item.isChecked
+                      item.done
                         ? "checkbox-marked-circle-outline"
                         : "checkbox-blank-circle-outline"
                     }
@@ -93,7 +112,7 @@ import {
           />
         </View>
   
-        {renderFlatList(products)}
+        {renderFlatList(renderdata)}
   
         <View></View>
         <Modal
@@ -104,7 +123,7 @@ import {
                       >
                         <View style={styles.centeredView}>
                           <View style={styles.mod}>
-                            <AddCheckPoint />
+                            <AddCheckPoint onSave={handleChange}/>
 
                           </View>
                           <Pressable

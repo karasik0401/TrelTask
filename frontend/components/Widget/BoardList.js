@@ -3,37 +3,34 @@ import {
   Text,
   View,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import React from "react";
 import { Stack, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import CardTask_board from "./CardTask_board";
 
-function BoardList({ navigation }) {
+function BoardList({navigation, chapters}) {
+  console.log(chapters)
+  
   return (
     <View style={styles.BoardList}>
       <View style={styles.header}>
-        <Text style={styles.header_text}>Документация</Text>
+        <Text style={styles.header_text}>{chapters.name}</Text>
       </View>
-      <View style={styles.body}>
-        <TouchableOpacity
-          style={styles.task}
-          onPress={() => navigation.navigate("TaskPage")}
-        >
-          <CardTask_board navigation={navigation} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.task}
-          onPress={() => navigation.navigate("TaskPage")}
-        >
-          <CardTask_board navigation={navigation} />
-        </TouchableOpacity>
-      </View>
-
+        <FlatList style={styles.body}
+                data={chapters.tasks}
+                кey={(item) => item}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                  style={styles.task}
+                  onPress={() => navigation.navigate("TaskPage", item.id)}
+                >
+                  <CardTask_board navigation={navigation} task={item} />
+                </TouchableOpacity>)}/>
       <IconButton
         style={styles.icon_plus}
-        onPress={() => navigation.navigate("AddTask")}
+        onPress={() => navigation.navigate("AddTask", chapters)}
         icon={(props) => <Icon name="plus" {...props} color="#fefefe" />}
       />
     </View>

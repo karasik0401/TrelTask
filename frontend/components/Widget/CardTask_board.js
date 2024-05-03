@@ -7,28 +7,47 @@ import {
   import { Stack, IconButton } from "@react-native-material/core";
   import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
+  PRIORITY = {
+    0: "#7BB558",
+    1: "#ED863B",
+    2: "#E55050"
+}
   
   
-  
-  function CardTask_board({ route }) {
+  function CardTask_board({ route, task }) {
     
       return (
           <View style={styles.container} >
             
             <View style={styles.header}>
-                <Text style={styles.title}>Прописать пользовательские требования</Text>
-                <View style={styles.check}></View>
+                <Text style={styles.title}>{task.name}</Text>
+                <View style={task.done ? styles.un_check: styles.check}></View>
             </View>
 
             
             <View style={styles.row}>
-            <View style={styles.img}></View>
+                <View style={styles.row_as}>
+            {task.assignees.map(assignee => (
+                <View >
+                    <Image
+                    key={assignee.id}
+                    style={styles.img}
+                    source={assignee.photo ? { uri: assignee.photo } : require('../../img/Profile.png')}
+                    />
+                </View>))}
+                </View>
+
             <View style={styles.column}>
             <View style={styles.date}>
-                <Text style={styles.date}>08.11.23</Text>
+                <Text style={styles.date}>{task.deadline}</Text>
             </View>
 
-            <View style={styles.line}>
+            <View style={{
+                width: 47,
+                height: 10,
+                backgroundColor: PRIORITY[task.priority],
+                borderRadius: 15,
+            }}>
                 
                 
             </View>
@@ -40,7 +59,7 @@ import {
               
           </View>
       );
-  
+      row_as
   }
   
   const styles = StyleSheet.create({
@@ -56,6 +75,11 @@ import {
           paddingLeft: 12,
           paddingVertical: 24,
 
+        },
+
+        row_as:{
+            display:"flex",
+            flexDirection: "row",
         },
 
         title:{
@@ -78,6 +102,13 @@ import {
             borderColor:"#FEFEFE"
         },
 
+        un_check:{
+            width: 30,
+            height:30,
+            borderRadius: 100,
+            backgroundColor: "#7BB558"
+        },
+
         date:{
             color: '#FEFEFE',
             fontSize: 12,
@@ -94,6 +125,7 @@ import {
         img:{
             width: 24,
             height:24,
+            marginRight: -12,
             borderRadius: 100,
             backgroundColor:"#fefefe"
         },

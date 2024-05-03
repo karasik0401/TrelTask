@@ -14,12 +14,16 @@ from tasks.models import Board, Chapter, Task
 
 class TaskShowSerializer(serializers.ModelSerializer):
     assignees = CustomUserSerializer(many=True)
+    board_id = serializers.SerializerMethodField()
     # files = FileSerializer(many=True)
 
     class Meta:
         model = Task
-        fields = ['id', 'name', 'description', 'check_list', 'deadline', 'priority', 'assignees']
+        fields = ['id', 'name', 'description', 'check_list', 'deadline', 'priority', 'assignees', 'done', 'board_id']
 
+
+    def get_board_id(self, obj):
+        return obj.chapter.board_id
 
 class TaskCreateUpdateSerializer(serializers.ModelSerializer):
     # files = FileSerializer(many=True, required=False)
@@ -56,11 +60,18 @@ class TaskCreateUpdateSerializer(serializers.ModelSerializer):
 
 class TaskListSerializer(serializers.ModelSerializer):
     assignees = CustomUserSerializer(many=True)
+    board_name = serializers.CharField(source="chapter.board")
 
     class Meta:
         model = Task
-        fields = ['id', 'name', 'description', 'check_list', 'deadline', 'priority', 'assignees', 'done']
+        fields = ['id', 'name', 'description', 'check_list', 'deadline', 'priority', 'assignees', 'done', "board_name"]
 
+
+class TaskDetailForUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Task
+        fields = ("id", "assignees",)
 
 class ChapterShowSerializer(serializers.ModelSerializer):
     tasks = TaskListSerializer(many=True)
@@ -82,7 +93,7 @@ class ChapterListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chapter
-        fields = ['id', 'name', 'tasks']
+        fields = ['id', 'name', 'tasks', 'board']
 
 
 class BoardListSerializer(serializers.ModelSerializer):
@@ -98,7 +109,7 @@ class BoardListSerializer(serializers.ModelSerializer):
         total_tasks = obj.done + obj.not_done
         if total_tasks == 0:
             return 0
-        percent_done = (obj.done / total_tasks) * 100
+        percent_done = (obj.done / total_tasks)
         return round(percent_done, 2)
 
 
@@ -108,6 +119,12 @@ class BoardCreateUpdateSerializer(serializers.ModelSerializer):
         model = Board
         fields = ['id', 'name', 'participants']
 
+
+class BoardDetailForUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Board
+        fields = ("id", "participants",)
 
 class BoardShowSerializer(serializers.ModelSerializer):
     creator = CustomUserSerializer()
