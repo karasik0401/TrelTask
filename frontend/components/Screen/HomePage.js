@@ -21,6 +21,7 @@ import CardBoard_home from "../Widget/CardBoard_home";
 import CardTask_home from "../Widget/CardTask_home";
 import { useIsFocused } from '@react-navigation/native';
 import { REACT_APP_API_URL } from '@env';
+import { getUsersBoards, getUsersTasks } from "../api";
 
 const API_URL = REACT_APP_API_URL;
 
@@ -30,13 +31,14 @@ function HomePage({ navigation }) {
 
   const fetchBoardData = async() => {
     try {
-      const response = await fetch(`${API_URL}/api/boards/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Token ${auth_token}`,
-        },
-      });
+      const response = await getUsersBoards();
+      // fetch(`${API_URL}/api/boards/`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     authorization: `Token ${auth_token}`,
+      //   },
+      // });
       const json = await response.json();
       setBoardList(json);
     }
@@ -47,13 +49,14 @@ function HomePage({ navigation }) {
 
   const fetchTaskData = async() => {
     try {
-      const response = await fetch(`${API_URL}/api/tasks/users_tasks/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Token ${auth_token}`,
-        },
-      });
+      const response = await getUsersTasks();
+      // fetch(`${API_URL}/api/tasks/users_tasks/`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     authorization: `Token ${auth_token}`,
+      //   },
+      // });
       const json = await response.json();
       setTaskList(json);
     }

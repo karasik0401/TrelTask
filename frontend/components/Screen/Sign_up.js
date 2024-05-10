@@ -3,6 +3,7 @@ import React from 'react';
 
 import { StyleSheet, Text, View, TextInput,Button,Pressable, Alert, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import {REACT_APP_API_URL} from "@env";
+import { registerUser } from '../api';
 
 const API_URL = REACT_APP_API_URL
 console.log(API_URL)
@@ -10,20 +11,20 @@ console.log(API_URL)
 function Sign_up({navigation}) {
   
     const [userData, setUserData] = React.useState({});
-    const checkResponse = (res) => {
-      if (res.ok) {
-        return (res);
-      }
-      return res.json().then((err) => Promise.reject(err));
-    };
+    // const checkResponse = (res) => {
+    //   if (res.ok) {
+    //     return (res);
+    //   }
+    //   return res.json().then((err) => Promise.reject(err));
+    // };
   
-    const registerUser = (username, email, password, re_password) => {
-      return fetch(`${API_URL}/api/users/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, re_password}),
-      }).then(checkResponse);
-    };
+    // const registerUser = (username, email, password, re_password) => {
+    //   return fetch(`${API_URL}/api/users/`, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ username, email, password, re_password}),
+    //   }).then(checkResponse);
+    // };
   
   
     const checkValid = () => {
@@ -45,7 +46,7 @@ function Sign_up({navigation}) {
   
     const handleSubmit = () => {
       checkValid() &&
-      registerUser(userData.username, userData.email, userData.password, userData.re_password, 1)
+      registerUser(userData.username, userData.email, userData.password, userData.re_password)
         .then((res) => {
           if (res.status === 201) {
             navigation.navigate('Sign_in')

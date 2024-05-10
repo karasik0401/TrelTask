@@ -10,6 +10,7 @@ import {REACT_APP_API_URL} from "@env";
 const API_URL = REACT_APP_API_URL
 
 import { StyleSheet, Text, Image, View, ScrollView, Button,Pressable, Alert, SafeAreaView, } from 'react-native';
+import { ChengeUser, getUser } from '../api';
 
 
 
@@ -31,25 +32,24 @@ function Profile({ navigation }) {
         }
     };
     
-    const checkResponse = (res) => {
-      if (res.ok) {
-        return (res.json());
-      }
-      return res.json().then((err) => Promise.reject(err));
-    };
+    // const checkResponse = (res) => {
+    //   if (res.ok) {
+    //     return (res.json());
+    //   }
+    //   return res.json().then((err) => Promise.reject(err));
+    // };
 
-    const ChengeUser = (data) => {
-      console.log(data, "меняем")
-      return fetch(`${API_URL}/api/users/${userState.id}/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          authorization: `Token ${auth_token}`,
-        },
-        body: data
-      })
-        .then(checkUpdateResponse)
-    };
+    // const ChengeUser = (data) => {
+    //   console.log(data, "меняем")
+    //   return fetch(`${API_URL}/api/users/${userState.id}/`, {
+    //     method: 'PATCH',
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
+    //       authorization: `Token ${auth_token}`,
+    //     },
+    //     body: data
+    //   }).then(checkResponse)
+    // };
 
     const handleSubmit = (result) => {
       let formData = new FormData();
@@ -79,21 +79,21 @@ function Profile({ navigation }) {
       );
     };
 
-    const getUser = () => {
-        return fetch(`${API_URL}/api/users/me/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Token ${auth_token}`,
-          },
-        }).then(checkResponse)
-        .then((res) => setUserState(res))
-      };
+    // const getUser = () => {
+    //     return fetch(`${API_URL}/api/users/me/`, {
+    //       method: "GET",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         authorization: `Token ${auth_token}`,
+    //       },
+    //     }).then(checkResponse)
+    //     .then((res) => setUserState(res))
+    //   };
     const isFocused = useIsFocused();
     React.useEffect(() => {
         const token = auth_token;
         if (token) {
-          getUser();
+          getUser().then((res) => setUserState(res));
         }
     }, [image, isFocused]);
 

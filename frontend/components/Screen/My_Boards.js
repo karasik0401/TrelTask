@@ -11,6 +11,7 @@ import NavBar from '../Widget/NavBar';
 import CardBoard_List from '../Widget/CardBoard_List';
 import { useIsFocused } from '@react-navigation/native';
 import { REACT_APP_API_URL } from '@env';
+import { getUsersBoards } from '../api';
 
 const API_URL = REACT_APP_API_URL;
   
@@ -20,13 +21,14 @@ const API_URL = REACT_APP_API_URL;
 
   const fetchBoardData = async() => {
     try {
-      const response = await fetch(`${API_URL}/api/boards/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Token ${auth_token}`,
-        },
-      });
+      const response = await getUsersBoards()
+      // fetch(`${API_URL}/api/boards/`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     authorization: `Token ${auth_token}`,
+      //   },
+      // });
       const json = await response.json();
       setBoardList(json);
     }

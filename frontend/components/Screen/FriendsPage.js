@@ -23,6 +23,7 @@ import NavBar from "../Widget/NavBar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import filter from "lodash.filter";
 import { REACT_APP_API_URL } from '@env';
+import { GetUsersList, createFollow, deleteFollow } from "../api";
 
 const API_URL = REACT_APP_API_URL;
 
@@ -49,13 +50,14 @@ function FriendsPage({ navigation }) {
 
   const fetchUsersData = async() => {
     try {
-      const response = await fetch(`${API_URL}/api/users/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Token ${auth_token}`,
-        },
-      });
+      const response = await GetUsersList();
+      // fetch(`${API_URL}/api/users/`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     authorization: `Token ${auth_token}`,
+      //   },
+      // });
       const json = await response.json();
       console.log(json)
       setData(json);
@@ -68,15 +70,16 @@ function FriendsPage({ navigation }) {
 
   const CreateFollow = async(following) => {
     try {
-      const response = await fetch(`${API_URL}/api/follow/`, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Token ${auth_token}`,
-        },
-        body: JSON.stringify({ following }),
-    });
-      const json = await response.json();
+      const response = await createFollow(following);
+    //   fetch(`${API_URL}/api/follow/`, {
+    //     method: 'POST',
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       authorization: `Token ${auth_token}`,
+    //     },
+    //     body: JSON.stringify({ following }),
+    // });
+      const json = await response;
       fetchUsersData();
     }
     catch (error) {
@@ -86,13 +89,14 @@ function FriendsPage({ navigation }) {
 
   const DeleteFollow = async(following) => {
     try {
-      const response = await fetch(`${API_URL}/api/follow/${following}/delete/`, {
-        method: 'DELETE',
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Token ${auth_token}`,
-        },
-    });
+      const response = await deleteFollow(following)
+    //   fetch(`${API_URL}/api/follow/${following}/delete/`, {
+    //     method: 'DELETE',
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       authorization: `Token ${auth_token}`,
+    //     },
+    // });
       const json = await response;
       fetchUsersData();
     }

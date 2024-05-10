@@ -3,6 +3,7 @@ import React from 'react';
 
 import { StyleSheet, Text, View, TextInput,Button,Pressable, Alert, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {REACT_APP_API_URL} from "@env";
+import { loginUser } from '../api';
 
 const API_URL = REACT_APP_API_URL
 console.log(API_URL)
@@ -14,27 +15,27 @@ function Sign_in({navigation}) {
 
     const [userData, setUserData] = React.useState({});
 
-    const checkResponse = (res) => {
-      if (res.ok) {
-        return (res.json());
-      }
-      return res.json().then((err) => Promise.reject(err));
-    };
+    // const checkResponse = (res) => {
+    //   if (res.ok) {
+    //     return (res.json());
+    //   }
+    //   return res.json().then((err) => Promise.reject(err));
+    // };
 
-    const loginUser = (username, password) => {
-      return fetch(`${API_URL}/api/auth/token/login/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      }).then(checkResponse)
-        .then((data) => {
-          if (data) {
-            global.auth_token = data.auth_token;
-            return data;
-          }
-          return null;
-        });
-    };
+    // const loginUser = (username, password) => {
+    //   return fetch(`${API_URL}/api/auth/token/login/`, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ username, password }),
+    //   }).then(checkResponse)
+    //     .then((data) => {
+    //       if (data) {
+    //         global.auth_token = data.auth_token;
+    //         return data;
+    //       }
+    //       return null;
+    //     });
+    // };
 
     const checkValid = () => {
       if (!userData.username) {

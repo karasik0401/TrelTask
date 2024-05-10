@@ -11,6 +11,7 @@ import NavBar from '../Widget/NavBar';
 import CardTask_home from '../Widget/CardTask_home';
 import { useIsFocused } from '@react-navigation/native';
 import { REACT_APP_API_URL } from '@env';
+import { getUsersTasks } from '../api';
 
 const API_URL = REACT_APP_API_URL;
   
@@ -20,13 +21,14 @@ const API_URL = REACT_APP_API_URL;
 
     const fetchTaskData = async() => {
       try {
-        const response = await fetch(`${API_URL}/api/tasks/users_tasks/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Token ${auth_token}`,
-          },
-        });
+        const response = await getUsersTasks();
+        // fetch(`${API_URL}/api/tasks/users_tasks/`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     authorization: `Token ${auth_token}`,
+        //   },
+        // });
         const json = await response.json();
         setTaskList(json);
       }

@@ -25,6 +25,7 @@ import AddConsumer from "../Widget/AddConsumer";
 import { color } from "@rneui/themed/dist/config";
 import { useIsFocused } from '@react-navigation/native';
 import { REACT_APP_API_URL } from '@env';
+import { getTask } from "../api";
 
 const API_URL = REACT_APP_API_URL;
 
@@ -83,13 +84,14 @@ function TaskPage(props) {
 
   const fetchTaskData = async() => {
     try {
-      const response = await fetch(`${API_URL}/api/tasks/${props.route.params}/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Token ${auth_token}`,
-        },
-      });
+      const response = await getTask(props.route.params);
+      // fetch(`${API_URL}/api/tasks/${props.route.params}/`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     authorization: `Token ${auth_token}`,
+      //   },
+      // });
       const json = await response.json();
       setTask(json);
       setCheckList(json.check_list)

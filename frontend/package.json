@@ -24,6 +24,7 @@
     "expo-status-bar": "~1.6.0",
     "fetch-mock": "^9.11.0",
     "find": "^0.3.0",
+    "jest-fetch-mock": "^3.0.3",
     "lodash.filter": "^4.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
