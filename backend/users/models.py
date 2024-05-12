@@ -2,13 +2,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-FRIENDSHIP_REQUEST_STATUSES = (
-    ('sent', 'Заявка отправлена'),
-    ('rejected', 'Заявка отклонена')
-)
-
-
 class CustomUser(AbstractUser):
+    first_name = None
+    last_name = None
     email = models.EmailField(
         unique=True,
         blank=True,
@@ -21,7 +17,6 @@ class CustomUser(AbstractUser):
         upload_to='users/images/',
         verbose_name='Фото'
     )
-    friends = models.ManyToManyField('CustomUser', blank=True)
 
     class Meta:
         verbose_name = 'Пользователь'
