@@ -44,12 +44,18 @@ class BoardViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         data = serializer.validated_data
+        participants = data.get("participants", [])
         if self.request.user in data.get("participants"):
             raise ValidationError("Нельзя добавить самого себя в участинки")
+        participants.append(self.request.user)
         serializer.save(creator=self.request.user)
 
     def perform_update(self, serializer):
         instance = self.get_object()
+        data = serializer.validated_data
+        print(data.get("participants"))
+        if self.request.user not in data.get("participants"):
+            raise ValidationError("Нельзя убрать самого себя из участинков")
         if instance.creator != self.request.user:
             raise PermissionDenied("You are not allowed to update this object.")
         serializer.save()
